@@ -1,0 +1,1 @@
+https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/

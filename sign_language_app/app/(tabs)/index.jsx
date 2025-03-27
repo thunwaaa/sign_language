@@ -8,66 +8,78 @@ import {
   ScrollView,
   Pressable,
   FlatList,
+  BackHandler,
+  SafeAreaView,
 } from "react-native";
 import { data } from "@/context/signlangVocab";
-
+import React from "react";
 import { HelloWave } from "@/components/HelloWave";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useState, useEffect } from "react";
 import { Colors } from "@/constants/Colors";
+import SearchScreen from "../../components/SearchScreen";
 
 export default function HomeScreen() {
   // different rendering for web
   const isWeb = Platform.OS === "web";
+  const [showSearch, setShowSearch] = useState(false);
+  const [query, setQuery] = useState("");
+  const [filteredData, setFilteredData] = useState(data);
+
+  const handleSearch = (text) => {
+    setShowSearch(true);
+    setQuery(text);
+    const filtered = text
+      ? data.filter((item) =>
+          item.word.toLowerCase().includes(text.toLowerCase())
+        )
+      : data;
+    setFilteredData(filtered);
+  };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* Header Section */}
       <View style={styles.titleContainer}>
         <ThemedText type="title">Words</ThemedText>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Search"
-            placeholderTextColor="gray"
-          />
-          <Pressable>
-            <FontAwesome5 name="search" size={14} color="black" />
-          </Pressable>
-        </View>
+      </View>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Search"
+          placeholderTextColor="gray"
+          value={query}
+          onChangeText={handleSearch}
+          clearButtonMode="always"
+        />
       </View>
 
-      {/* Content Section for web vs native */}
-      {isWeb ? <WebGridLayout /> : <NativeGridLayout />}
-    </View>
+      {showSearch ? (
+        <SearchNativeGridLayout filteredData={filteredData} />
+      ) : (
+        <NativeGridLayout />
+      )}
+      {/* <SearchNativeGridLayout filteredData={filteredData}/> */}
+
+      {/* { isWeb ? (
+        <WebGridLayout />
+      ) : (
+        <NativeGridLayout />
+      )} */}
+
+      {/* <NativeGridLayout /> */}
+    </SafeAreaView>
   );
 }
 
-//layout for web that uses CSS grid
-function WebGridLayout() {
-  return (
-    <ScrollView>
-      <View style={webStyles.gridContainer}>
-        {data.map((item) => (
-          <View key={item.id} style={styles.card}>
-            <HelloWave />
-            <Text style={styles.word}>{item.word}</Text>
-          </View>
-        ))}
-      </View>
-    </ScrollView>
-  );
-}
-
-// Native implementation using FlatList with numColumns
-function NativeGridLayout() {
+function SearchNativeGridLayout({ filteredData }) {
   return (
     <FlatList
       data={[
-        ...data,
-        ...Array(data.length % 3 ? 3 - (data.length % 3) : 0).fill({
+        ...filteredData,
+        ...Array(filteredData.length % 3 ? 3 - (data.length % 3) : 0).fill({
           id: "spacer",
           word: "",
           empty: true,
@@ -90,10 +102,8 @@ function NativeGridLayout() {
         }
         return (
           <View style={styles.card}>
-            
-              <HelloWave />
-              <Text style={styles.word}>{item.word}</Text>
-            
+            <HelloWave />
+            <Text style={styles.word}>{item.word}</Text>
           </View>
         );
       }}
@@ -101,6 +111,55 @@ function NativeGridLayout() {
         item.id ? item.id.toString() : `spacer-${index}`
       }
       numColumns={3}
+      contentContainerStyle={styles.listContainer}
+      columnWrapperStyle={styles.row}
+      ListEmptyComponent={<Text style={styles.noResult}>No results found</Text>}
+    />
+  );
+}
+
+//layout for web that uses CSS grid
+// function WebGridLayout() {
+//   return (
+//     <ScrollView>
+//       <View style={webStyles.gridContainer}>
+//         {data.map((item) => (
+//           <View key={item.id} style={styles.card}>
+//             <HelloWave />
+//             <Text style={styles.word}>{item.word}</Text>
+//           </View>
+//         ))}
+//       </View>
+//     </ScrollView>
+//   );
+// }
+
+// Native implementation using FlatList with numColumns
+function NativeGridLayout() {
+  const numColumns = 3;
+  const extraSpaces = (numColumns - (data.length % numColumns)) % numColumns;
+  const paddedData = [
+    ...data,
+    ...Array(extraSpaces).fill({ id: "spacer", empty: true }),
+  ];
+
+  return (
+    <FlatList
+      data={paddedData}
+      renderItem={({ item }) =>
+        item.empty ? (
+          <View style={[styles.card, styles.spacerCard]} />
+        ) : (
+          <View style={styles.card}>
+            <HelloWave />
+            <Text style={styles.word}>{item.word}</Text>
+          </View>
+        )
+      }
+      keyExtractor={(item, index) =>
+        item.id ? item.id.toString() : `spacer-${index}`
+      }
+      numColumns={numColumns}
       contentContainerStyle={styles.listContainer}
       columnWrapperStyle={styles.row}
     />
@@ -132,16 +191,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "column",
     gap: 8,
-    paddingTop: 60,
+    paddingTop: 10,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     padding: 5,
+    margin: 10,
     backgroundColor: "white",
     borderRadius: 10,
-    width: "100%",
+    width: "95%",
     borderColor: "white",
     borderWidth: 1,
     shadowColor: "#000",
@@ -185,7 +245,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
-  
+
   listContainer: {
     paddingHorizontal: 10,
     alignItems: "center",
@@ -193,5 +253,11 @@ const styles = StyleSheet.create({
   },
   row: {
     justifyContent: "space-between",
+  },
+  noResult: {
+    textAlign: "center",
+    fontSize: 16,
+    marginTop: 20,
+    color: "gray",
   },
 });

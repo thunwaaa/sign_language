@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { StyleSheet, TextInput, View, Button, Text } from 'react-native';
 
 
- // โมเดลมือ 3D ที่คุณสร้างไว้
+
 
 export default function TranslateScreen() {
   const [inputText, setInputText] = useState('');
   const [translatedText, setTranslatedText] = useState('');
 
   const handleTranslate = () => {
-    // ตัวอย่างการแปลข้อความเป็นภาษามือ (คุณสามารถเชื่อมต่อ API หรือโมเดล AI ได้)
-    setTranslatedText(inputText.toUpperCase()); // แปลงข้อความเป็นตัวพิมพ์ใหญ่ (ตัวอย่าง)
+    // ตัวอย่างการแปลข้อความเป็นภาษามือเชื่อมต่อ API หรือโมเดล AI 
+    setTranslatedText(inputText.toUpperCase()); 
   };
 
   return (

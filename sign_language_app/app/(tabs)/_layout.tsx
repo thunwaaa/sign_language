@@ -41,7 +41,7 @@ export default function TabLayout() {
         name="translate"
         options={{
           title: 'Translate',
-          headerShown: true,
+          headerShown: false,
           tabBarIcon: ({ color }) => <MaterialIcons name="translate" size={24} color={color} />,
         }}
       />

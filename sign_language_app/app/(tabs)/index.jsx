@@ -1,263 +1,172 @@
-import {
-  Image,
-  StyleSheet,
-  Platform,
-  TextInput,
-  View,
-  Text,
-  ScrollView,
-  Pressable,
-  FlatList,
-  BackHandler,
-  SafeAreaView,
-} from "react-native";
-import { data } from "@/context/signlangVocab";
-import React from "react";
-import { HelloWave } from "@/components/HelloWave";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { useState, useEffect } from "react";
-import { Colors } from "@/constants/Colors";
-import SearchScreen from "../../components/SearchScreen";
+import React, { useState, useEffect } from 'react';
+import { 
+  View, 
+  StyleSheet, 
+  FlatList, 
+  Text, 
+  SafeAreaView 
+} from 'react-native';
+import Animated, { 
+  useSharedValue, 
+  useAnimatedScrollHandler,
+} from 'react-native-reanimated';
+import SignCard from '@/components/SignCard';
+import SearchBar from '@/components/SearchBar';
+import AnimatedHeader from '@/components/AnimatedHeader';
+import WordDetailModal from '@/components/WordDetailModal';
+import { signWords, } from '@/context/words';
+
+const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
 export default function HomeScreen() {
-  // different rendering for web
-  const isWeb = Platform.OS === "web";
-  const [showSearch, setShowSearch] = useState(false);
-  const [query, setQuery] = useState("");
-  const [filteredData, setFilteredData] = useState(data);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [filteredWords, setFilteredWords] = useState(signWords);
+  const [selectedWord, setSelectedWord] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [favorites, setFavorites] = useState([]);
+  
+  const scrollY = useSharedValue(0);
 
-  const handleSearch = (text) => {
-    setShowSearch(true);
-    setQuery(text);
-    const filtered = text
-      ? data.filter((item) =>
-          item.word.toLowerCase().includes(text.toLowerCase())
-        )
-      : data;
-    setFilteredData(filtered);
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  useEffect(() => {
+    let result = signWords;
+    
+    // Filter by search query
+    if (searchQuery) {
+      const lowercasedQuery = searchQuery.toLowerCase();
+      result = result.filter(
+        word => 
+          word.word.toLowerCase().includes(lowercasedQuery) || 
+          (word.translation && word.translation.toLowerCase().includes(lowercasedQuery))
+      );
+    }
+    
+    // Filter by category
+    if (selectedCategory !== 'all') {
+      result = result.filter(word => word.category === selectedCategory);
+    }
+    
+    setFilteredWords(result);
+  }, [searchQuery, selectedCategory]);
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
   };
+
+  const handleCardPress = (word) => {
+    setSelectedWord(word);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  const toggleFavorite = (word) => {
+    setFavorites((prevFavorites) => {
+      if (prevFavorites.some((fav) => fav.id === word.id)) {
+        // Remove from favorites
+        return prevFavorites.filter((fav) => fav.id !== word.id);
+      } else {
+        // Add to favorites
+        return [...prevFavorites, word];
+      }
+    });
+  };
+
+  const renderItem = ({ item }) => (
+    <SignCard word={item} onPress={() => handleCardPress(item)} />
+  );
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header Section */}
-      <View style={styles.titleContainer}>
-        <ThemedText type="title">Words</ThemedText>
-      </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Search"
-          placeholderTextColor="gray"
-          value={query}
-          onChangeText={handleSearch}
-          clearButtonMode="always"
+      <AnimatedHeader title="Words" scrollY={scrollY} />
+      
+      <SearchBar 
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        onClear={handleClearSearch}
+        placeholder="Search words"
+      />
+      
+      {filteredWords.length > 0 ? (
+        <AnimatedFlatList
+          data={filteredWords}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          numColumns={3}
+          contentContainerStyle={[styles.listContent, { paddingBottom: 80 }]} // เพิ่ม padding ด้านล่าง
+          showsVerticalScrollIndicator={false}
+          onScroll={scrollHandler}
+          scrollEventThrottle={16}
         />
-      </View>
-
-      {showSearch ? (
-        <SearchNativeGridLayout filteredData={filteredData} />
       ) : (
-        <NativeGridLayout />
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No words found</Text>
+          <Text style={styles.emptySubText}>Try a different search term or category</Text>
+        </View>
       )}
-      {/* <SearchNativeGridLayout filteredData={filteredData}/> */}
-
-      {/* { isWeb ? (
-        <WebGridLayout />
-      ) : (
-        <NativeGridLayout />
-      )} */}
-
-      {/* <NativeGridLayout /> */}
+      
+      <WordDetailModal 
+        visible={modalVisible}
+        word={selectedWord}
+        onClose={closeModal}
+        onFavorite={() => toggleFavorite(selectedWord)}
+        isFavorite={favorites.some((fav) => fav.id === selectedWord?.id)}
+      />
     </SafeAreaView>
   );
 }
 
-function SearchNativeGridLayout({ filteredData }) {
-  return (
-    <FlatList
-      data={[
-        ...filteredData,
-        ...Array(filteredData.length % 3 ? 3 - (data.length % 3) : 0).fill({
-          id: "spacer",
-          word: "",
-          empty: true,
-        }),
-      ]}
-      renderItem={({ item }) => {
-        if (item.empty) {
-          return (
-            <View
-              style={[
-                styles.card,
-                {
-                  backgroundColor: "transparent",
-                  shadowOpacity: 0,
-                  elevation: 0,
-                },
-              ]}
-            />
-          );
-        }
-        return (
-          <View style={styles.card}>
-            <HelloWave />
-            <Text style={styles.word}>{item.word}</Text>
-          </View>
-        );
-      }}
-      keyExtractor={(item, index) =>
-        item.id ? item.id.toString() : `spacer-${index}`
-      }
-      numColumns={3}
-      contentContainerStyle={styles.listContainer}
-      columnWrapperStyle={styles.row}
-      ListEmptyComponent={<Text style={styles.noResult}>No results found</Text>}
-    />
-  );
-}
-
-//layout for web that uses CSS grid
-// function WebGridLayout() {
-//   return (
-//     <ScrollView>
-//       <View style={webStyles.gridContainer}>
-//         {data.map((item) => (
-//           <View key={item.id} style={styles.card}>
-//             <HelloWave />
-//             <Text style={styles.word}>{item.word}</Text>
-//           </View>
-//         ))}
-//       </View>
-//     </ScrollView>
-//   );
-// }
-
-// Native implementation using FlatList with numColumns
-function NativeGridLayout() {
-  const numColumns = 3;
-  const extraSpaces = (numColumns - (data.length % numColumns)) % numColumns;
-  const paddedData = [
-    ...data,
-    ...Array(extraSpaces).fill({ id: "spacer", empty: true }),
-  ];
-
-  return (
-    <FlatList
-      data={paddedData}
-      renderItem={({ item }) =>
-        item.empty ? (
-          <View style={[styles.card, styles.spacerCard]} />
-        ) : (
-          <View style={styles.card}>
-            <HelloWave />
-            <Text style={styles.word}>{item.word}</Text>
-          </View>
-        )
-      }
-      keyExtractor={(item, index) =>
-        item.id ? item.id.toString() : `spacer-${index}`
-      }
-      numColumns={numColumns}
-      contentContainerStyle={styles.listContainer}
-      columnWrapperStyle={styles.row}
-    />
-  );
-}
-
-// Web-specific styles using CSS grid
-const webStyles = StyleSheet.create({
-  gridContainer: {
-    display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
-    gap: 10,
-    padding: 10,
-    // paddingBottom: 90,
-    width: "100%",
-    maxWidth: 500,
-    marginHorizontal: "auto",
-  },
-});
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#FFFFFF',
   },
-  titleContainer: {
-    justifyContent: "center",
-    padding: 10,
-    alignItems: "center",
-    flexDirection: "column",
-    gap: 8,
-    paddingTop: 10,
+  listContent: {
+    paddingHorizontal: 12,
+    paddingBottom: 24, // พื้นที่เริ่มต้น
   },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 5,
-    margin: 10,
-    backgroundColor: "white",
-    borderRadius: 10,
-    width: "95%",
-    borderColor: "white",
-    borderWidth: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1,
-  },
-  input: {
+  emptyContainer: {
     flex: 1,
-    backgroundColor: "white",
-    color: "black",
-    borderRadius: 20,
-    paddingHorizontal: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
   },
-  card: {
-    backgroundColor: "white",
-    height: 100,
-
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    marginVertical: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1,
-    elevation: 1,
-    // For native platforms only:
-    ...Platform.select({
-      ios: {
-        width: "32%",
-      },
-      android: {
-        width: "32%",
-      },
-    }),
+  emptyText: {
+    fontSize: 18,
+    fontFamily: 'Inter-SemiBold',
+    color: '#64748B',
+    marginBottom: 8,
   },
-  word: {
-    fontSize: 16,
-    paddingTop: 10,
-    fontWeight: "bold",
-    textAlign: "center",
+  emptySubText: {
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    color: '#94A3B8',
+    textAlign: 'center',
   },
-
-  listContainer: {
-    paddingHorizontal: 10,
-    alignItems: "center",
-    paddingBottom: 90,
+  header: {
+    alignItems: 'center', // จัดให้อยู่ตรงกลาง
+    justifyContent: 'center',
+    paddingBottom: 4, // ลด padding ด้านล่าง
+    paddingTop: 8, // ลด padding ด้านบน
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
   },
-  row: {
-    justifyContent: "space-between",
+  favoritesContainer: {
+    marginVertical: 16,
   },
-  noResult: {
-    textAlign: "center",
-    fontSize: 16,
-    marginTop: 20,
-    color: "gray",
+  favoritesTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter-SemiBold',
+    color: '#1E293B',
+    marginBottom: 8,
   },
 });

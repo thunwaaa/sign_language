@@ -1,29 +1,72 @@
-import { StyleSheet, Image, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, TextInput, View, Button, Text } from 'react-native';
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 
-export default function TabTwoScreen() {
+ // โมเดลมือ 3D ที่คุณสร้างไว้
+
+export default function TranslateScreen() {
+  const [inputText, setInputText] = useState('');
+  const [translatedText, setTranslatedText] = useState('');
+
+  const handleTranslate = () => {
+    // ตัวอย่างการแปลข้อความเป็นภาษามือ (คุณสามารถเชื่อมต่อ API หรือโมเดล AI ได้)
+    setTranslatedText(inputText.toUpperCase()); // แปลงข้อความเป็นตัวพิมพ์ใหญ่ (ตัวอย่าง)
+  };
+
   return (
-    
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Translate Page</ThemedText>
-      </ThemedView>
-      
+    <View style={styles.container}>
+      <Text style={styles.title}>Translate to Sign Language</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter text to translate"
+        value={inputText}
+        onChangeText={setInputText}
+      />
+      <Button title="Translate" onPress={handleTranslate} />
+      {translatedText ? (
+        <View style={styles.resultContainer}>
+          <Text style={styles.resultText}>Translation: {translatedText}</Text>
+          <Canvas style={styles.canvas}>
+            <ambientLight />
+            <OrbitControls />
+            <HandModel text={translatedText} /> {/* ส่งข้อความไปยังโมเดลมือ */}
+          </Canvas>
+        </View>
+      ) : null}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    justifyContent: 'center',
-    paddingTop: 80,
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: '#FFFFFF',
+    paddingVertical:80,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#CCCCCC',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+  },
+  resultContainer: {
+    marginTop: 16,
     alignItems: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  },
+  resultText: {
+    fontSize: 18,
+    marginBottom: 16,
+  },
+  canvas: {
+    width: '100%',
+    height: 300,
   },
 });

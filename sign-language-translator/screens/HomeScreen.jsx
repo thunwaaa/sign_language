@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-    FlatList,
     SafeAreaView,
     StyleSheet,
     Text,
@@ -10,13 +9,13 @@ import Animated, {
     useAnimatedScrollHandler,
     useSharedValue,
 } from 'react-native-reanimated';
-import { signWords, } from '../data/signWords';
+import { signWords, } from '../context/words';
 import AnimatedHeader from './../components/AnimatedHeader';
 import SearchBar from './../components/SearchBar';
 import SignCard from './../components/SignCard';
 import WordDetailModal from './../components/WordDetailModal';
 
-const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
+const AnimatedFlatList = Animated.FlatList;
 
 export default function HomeScreen() {
   const [searchQuery, setSearchQuery] = useState('');

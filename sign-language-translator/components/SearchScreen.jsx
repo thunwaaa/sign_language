@@ -1,25 +1,16 @@
-import React from "react";
-import {
-  Image,
-  StyleSheet,
-  Platform,
-  TextInput,
-  View,
-  Text,
-  ScrollView,
-  Pressable,
-  FlatList,
-  BackHandler,
-  Touchable,
-  TouchableOpacity,
-} from "react-native";
-import { data } from "@/context/signlangVocab";
-import { HelloWave } from "@/components/HelloWave";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { useState, useEffect } from "react";
-import { Colors } from "@/constants/Colors";
+import React, { useState } from "react";
+import {
+  FlatList,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View
+} from "react-native";
+import { data } from "../context/words";
+import { HelloWave } from "./HelloWave";
 
 function SearchScreen() {
   const [query, setQuery] = useState("");

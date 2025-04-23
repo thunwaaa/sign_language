@@ -1,12 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import Animated, { FadeIn, Layout } from 'react-native-reanimated';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Animated, FadeIn, LinearTransition } from 'react-native-reanimated';
 
 export default function SignCard({ word, onPress }) {
   return (
-    <Animated.View 
+    <Animated.View
       entering={FadeIn.duration(300)} 
-      layout={Layout.springify()}
+      layout={LinearTransition.springify()}
       style={styles.container}
     >
       <TouchableOpacity onPress={onPress} style={styles.card}>

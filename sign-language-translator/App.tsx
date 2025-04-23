@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import HomeScreen from './screens/HomeScreen';
+import HomeScreens from './screens/HomeScreen';
+import Translate from './screens/Translate';
 
 const Tab = createBottomTabNavigator();
 
@@ -30,10 +31,10 @@ export default function App() {
           headerShown: false,
         })}
       >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Translate" component={HomeScreen} />
-        <Tab.Screen name="Camera" component={HomeScreen} />
-        <Tab.Screen name="Menu" component={HomeScreen} />
+        <Tab.Screen name="Home" component={Translate} />
+        <Tab.Screen name="Translate" component={HomeScreens} />
+        <Tab.Screen name="Camera" component={HomeScreens} />
+        <Tab.Screen name="Menu" component={HomeScreens} />
       </Tab.Navigator>
     </NavigationContainer>
   );

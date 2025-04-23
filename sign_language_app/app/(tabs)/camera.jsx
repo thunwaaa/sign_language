@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
-    padding: 16,
+    padding: 15,
     backgroundColor: '#fff',
   },
   cameraContainer: {
@@ -86,10 +86,11 @@ const styles = StyleSheet.create({
   translationBox: {
     backgroundColor: '#3f51b5',
     borderRadius: 10,
-    padding: 16,
-    marginVertical: 20,
+    padding: 15,
+    marginVertical: 110 ,
     minHeight: 100,
     position: 'relative',
+    paddingVertical: 20
   },
   translationText: {
     color: 'white',

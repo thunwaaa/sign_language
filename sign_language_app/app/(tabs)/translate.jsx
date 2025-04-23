@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 
 
+
+
 export default function TranslateScreen() {
   const [inputText, setInputText] = useState('');
   const [translatedText, setTranslatedText] = useState('');

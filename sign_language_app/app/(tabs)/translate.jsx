@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, View, Button, Text } from 'react-native';
-
-
+import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 
 
 export default function TranslateScreen() {

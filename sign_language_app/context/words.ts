@@ -1,4 +1,4 @@
-import { SignWord } from '@/types';
+import { SignWord } from '../types/index';
 
 export const signWords: SignWord[] = [
   { id: '1', word: 'สวัสดี', icon: '👋' },

@@ -10,11 +10,11 @@ import Animated, {
   useSharedValue, 
   useAnimatedScrollHandler,
 } from 'react-native-reanimated';
-import SignCard from '@/components/SignCard';
-import SearchBar from '@/components/SearchBar';
-import AnimatedHeader from '@/components/AnimatedHeader';
-import WordDetailModal from '@/components/WordDetailModal';
-import { signWords, } from '@/context/words';
+import SignCard from '../../components/SignCard';
+import SearchBar from '../../components/SearchBar';
+import AnimatedHeader from '../../components/AnimatedHeader';
+import WordDetailModal from '../../components/WordDetailModal';
+import { signWords, } from '../../context/words';
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 

@@ -94,7 +94,6 @@ export default function HomeScreen() {
         onClear={handleClearSearch}
         placeholder="Search words"
       />
-      <Text>Test</Text>
       
       {filteredWords.length > 0 ? (
         <AnimatedFlatList

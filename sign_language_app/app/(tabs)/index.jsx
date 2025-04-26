@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  StyleSheet, 
-  FlatList, 
-  Text, 
-  SafeAreaView 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import {
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View
 } from 'react-native';
-import Animated, { 
-  useSharedValue, 
+import Animated, {
   useAnimatedScrollHandler,
+  useSharedValue,
 } from 'react-native-reanimated';
-import SignCard from '../../components/SignCard';
-import SearchBar from '../../components/SearchBar';
 import AnimatedHeader from '../../components/AnimatedHeader';
+import SearchBar from '../../components/SearchBar';
+import SignCard from '../../components/SignCard';
 import WordDetailModal from '../../components/WordDetailModal';
 import { signWords, } from '../../context/words';
 
@@ -82,9 +84,41 @@ export default function HomeScreen() {
 
   const renderItem = ({ item }) => (
     <SignCard word={item} onPress={() => handleCardPress(item)} />
+    
   );
 
+  // อันนี้ส่วน Setting เด้อออ
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkDefaultPage = async () => {
+      const savedPage = await AsyncStorage.getItem('defaultStartPage');
+      
+      // ถ้าไม่มีค่าเก็บไว้ ให้ไปหน้า home
+      const startPage = savedPage || 'homeScreenn';
+
+      switch (startPage) {
+        case 'translate':
+          router.replace('/translate');
+          break;
+        case 'word':
+          router.replace('');
+          break;
+        case 'camera':
+          router.replace('/camera');
+          break;
+        case 'home':
+        default:
+          router.replace('/homeScreen');
+          break;
+      }
+    };
+
+    checkDefaultPage();
+  }, []);
+
   return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
     <SafeAreaView style={styles.container}>
       <AnimatedHeader title="Words" scrollY={scrollY} />
       
@@ -121,6 +155,7 @@ export default function HomeScreen() {
         isFavorite={favorites.some((fav) => fav.id === selectedWord?.id)}
       />
     </SafeAreaView>
+    </View>
   );
 }
 

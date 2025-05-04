@@ -13,10 +13,9 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/SignIn" element={<SignIn />} />
         <Route path="/Register" element={<Register />} />
-        <Route path="/Vocab" element={<Vocabulary />} />
+        <Route path="/Vocabulary" element={<Vocabulary />} />
         <Route path="/Translate" element={<Translate />} />
         <Route path="/Favourite" element={<Favorite />} />
-    
       </Routes>
     </BrowserRouter>
   );

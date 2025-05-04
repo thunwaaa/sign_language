@@ -1,15 +1,19 @@
 // src/components/Home.jsx
 
 import React from 'react';
+import Header from '../components/Header';
 
 function Home() {
   return (
-    <main style={styles.container}>
-      <h1 style={styles.heading}>REACT</h1>
-      <p style={styles.paragraph}>
-        เป็น Template เดี๋ยวมายัดเพิ่ม
-      </p>
-    </main>
+    <>
+      <Header />
+      <main style={styles.container}>
+        <h1 style={styles.heading}>REACT</h1>
+        <p style={styles.paragraph}>
+          เป็น Template เดี๋ยวมายัดเพิ่ม
+        </p>
+      </main>
+    </>
   );
 }
 

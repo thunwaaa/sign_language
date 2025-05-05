@@ -1,15 +1,17 @@
 import React from 'react';
 import Header from '../components/Header';
+import SearchBar from '../components/SearchBar';
+import SignGrid from '../components/SignGrid';
+import '../components/style/vocab.css';
 
 function Vocabulary() {
   return (
     <>
       <Header />
       <main style={styles.container}>
-        <h1 style={styles.heading}>Vocab</h1>
-        <p style={styles.paragraph}>
-            หน้า vocab จ้าาา
-        </p>
+        <h1 style={styles.heading}>Sign Language Vocabulary</h1>
+        <SearchBar />
+        <SignGrid />
       </main>
     </>
   );
@@ -26,9 +28,12 @@ const styles = {
     fontSize: '2.5rem',
     color: '#333',
   },
-  paragraph: {
-    fontSize: '1.2rem',
-    color: '#666',
+  cardContainer: {
+    marginTop: '20px',
+    display : 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 };
 

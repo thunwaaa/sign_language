@@ -7,7 +7,7 @@ function Translate() {
     <>
       <Header />
       <div style={styles.container}>
-      {/* Text input area */}
+      {/* Text input */}
       <div style={styles.leftPanel}>
         <h2 style={{ color: '#1a0dab' }}>Text To Sign Language Translator</h2>
         <textarea
@@ -18,11 +18,11 @@ function Translate() {
         />
       </div>
 
-      {/* 3D hand placeholder */}
+      {/* 3D */}
       <div style={styles.rightPanel}>
         <h2>3D Hand Preview</h2>
         <div style={styles.handPlaceholder}>
-          {/* Later you can replace this with real 3D rendering */}
+          {/* เอาไว้ใส้ 3D  */}
           <p style={{ color: '#aaa' }}>[3D hand animation for: {text}]</p>
         </div>
       </div>
@@ -35,7 +35,7 @@ const styles = {
   container: {
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'flex-start', // 👈 Start from top
+    alignItems: 'flex-start',
     minHeight: '100vh',
     padding: '2rem',
     backgroundColor: '#f7f8fa',
@@ -43,13 +43,13 @@ const styles = {
     flexWrap: 'wrap',
   },
   leftPanel: {
-    flex: '0 0 600px', // 👈 Bigger width
+    flex: '0 0 600px',
     display: 'flex',
     flexDirection: 'column',
     gap: '1rem',
   },
   rightPanel: {
-    flex: '0 0 600px', // 👈 Same width
+    flex: '0 0 600px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -57,7 +57,7 @@ const styles = {
   },
   textarea: {
     width: '100%',
-    height: '300px', // 👈 Taller text area
+    height: '300px',
     fontSize: '1.1rem',
     padding: '0.8rem',
     borderRadius: '8px',
@@ -67,7 +67,7 @@ const styles = {
   },
   handPlaceholder: {
     width: '100%',
-    height: '300px', // 👈 Taller preview area
+    height: '300px',
     border: '2px dashed #ccc',
     borderRadius: '10px',
     display: 'flex',

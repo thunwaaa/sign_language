@@ -8,7 +8,7 @@ function Home() {
     <>
       <Header />
       <main style={styles.container}>
-        <h1 style={styles.heading}>REACT</h1>
+        <h1 style={styles.heading}>HOME</h1>
         <p style={styles.paragraph}>
           เป็น Template เดี๋ยวมายัดเพิ่ม
         </p>

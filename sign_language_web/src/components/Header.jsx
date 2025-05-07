@@ -20,6 +20,7 @@ const styles = {
     width: '100%',
     backgroundColor: '#fff',
     borderBottom: '1px solid #eee',
+    // position : 'fixed'
   },
   header: {
     maxWidth: '1200px',

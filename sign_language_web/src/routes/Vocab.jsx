@@ -1,19 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '../components/Header';
 import SearchBar from '../components/SearchBar';
 import SignGrid from '../components/SignGrid';
-import '../components/style/vocab.css';
+import signs from '../data/signs';
 
 function Vocabulary() {
+  const [searchTerm,setSearchTerm] = useState("");
+
+  const filteredSigns = signs.filter(sign => 
+    sign.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <>
+    <div>
       <Header />
       <main style={styles.container}>
         <h1 style={styles.heading}>Sign Language Vocabulary</h1>
-        <SearchBar />
-        <SignGrid />
+        <SearchBar 
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+        />
+        <SignGrid signs={filteredSigns} />
       </main>
-    </>
+    </div>
   );
 }
 
@@ -26,7 +35,7 @@ const styles = {
   },
   heading: {
     fontSize: '2.5rem',
-    color: '#333',
+    color: '#1a0dab',
   },
   cardContainer: {
     marginTop: '20px',

@@ -1,14 +1,23 @@
-import React from 'react';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { auth } from '../firebase'; // adjust the path if needed
 
 function SignIn() {
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // เดี๋ยวค่อยทำ Login Logic หลังใส่ Database
-    navigate('/');
+    setError('');
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate('/');
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -29,10 +38,24 @@ function SignIn() {
         <h2 style={styles.formTitle}>Sign In</h2>
         <form onSubmit={handleSubmit}>
           <label style={styles.label}>E-mail</label>
-          <input type="email" style={styles.input} required />
+          <input
+            type="email"
+            style={styles.input}
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
           <label style={styles.label}>Password</label>
-          <input type="password" style={styles.input} required />
+          <input
+            type="password"
+            style={styles.input}
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          {error && <p style={{ color: 'red' }}> Incorrect Email or Password </p>}
 
           <button type="submit" style={styles.button}>Sign In</button>
 

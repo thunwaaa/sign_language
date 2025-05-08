@@ -1,16 +1,40 @@
-import React from 'react';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore'; // ⬅️ Add Firestore methods
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { auth, db } from '../firebase'; // ⬅️ Also import `db`
 
 function Register() {
   const navigate = useNavigate();
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Register Logic ค่อยมาใส่ทีหลังจากทำ Database
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
 
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-    navigate('/');
+      // Save additional user data in Firestore
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        username,
+        email
+      });
+
+      navigate('/');
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -19,10 +43,7 @@ function Register() {
         <h1 style={styles.welcome}>
           Welcome to <span style={styles.brand}>HandsUp!</span>
         </h1>
-        <h2>
-            Create your Account
-        </h2>
-        
+        <h2>Create your Account</h2>
         <div style={styles.circles}>
           <div style={{ ...styles.circle, ...styles.circle1 }} />
           <div style={{ ...styles.circle, ...styles.circle2 }} />
@@ -34,14 +55,44 @@ function Register() {
       <div style={styles.formCard}>
         <h2 style={styles.formTitle}>Register</h2>
         <form onSubmit={handleSubmit}>
+          
           <label style={styles.label}>E-mail</label>
-          <input type="email" style={styles.input} required />
+          <input
+            type="email"
+            style={styles.input}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
+          <label style={styles.label}>Username</label>
+          <input
+            type="text"
+            style={styles.input}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
 
           <label style={styles.label}>Password</label>
-          <input type="password" style={styles.input} required />
+          <input
+            type="password"
+            style={styles.input}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
 
           <label style={styles.label}>Confirm Password</label>
-          <input type="password" style={styles.input} required />
+          <input
+            type="password"
+            style={styles.input}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+
+          {error && <p style={{ color: 'red' }}>{error}</p>}
 
           <button type="submit" style={styles.button}>Register</button>
 
@@ -143,14 +194,14 @@ const styles = {
     marginTop: '1rem',
   },
   input: {
-    width: '100%',
+    width: '90%',
     padding: '0.6rem',
     borderRadius: '5px',
     border: '1px solid #3B4CCA',
     marginBottom: '1rem',
   },
   button: {
-    width: '100%',
+    width: '95%',
     padding: '0.8rem',
     backgroundColor: '#3B4CCA',
     color: '#fff',

@@ -1,8 +1,6 @@
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore'; // ⬅️ Add Firestore methods
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, db } from '../firebase'; // ⬅️ Also import `db`
+import { registerUser } from '../api/registerUser'; // ⬅️ Import your new API function
 
 function Register() {
   const navigate = useNavigate();
@@ -16,21 +14,12 @@ function Register() {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError('Passwords do not match');
       return;
     }
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      // Save additional user data in Firestore
-      await setDoc(doc(db, 'users', user.uid), {
-        uid: user.uid,
-        username,
-        email
-      });
-
+      await registerUser(email, password, username); // ⬅️ Use the API
       navigate('/');
     } catch (err) {
       setError(err.message);
@@ -55,7 +44,6 @@ function Register() {
       <div style={styles.formCard}>
         <h2 style={styles.formTitle}>Register</h2>
         <form onSubmit={handleSubmit}>
-          
           <label style={styles.label}>E-mail</label>
           <input
             type="email"

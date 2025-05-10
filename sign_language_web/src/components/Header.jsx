@@ -1,6 +1,34 @@
-import React from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
+import { auth, db } from '../firebase';
 
 function Header() {
+  const [username, setUsername] = useState(null); // null = loading, '' = not logged in
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const userRef = doc(db, 'users', user.uid);
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            setUsername(userSnap.data().username || user.email);
+          } else {
+            setUsername(user.email); // fallback
+          }
+        } catch (err) {
+          console.error('Error fetching user data:', err);
+          setUsername(user.email); // fallback
+        }
+      } else {
+        setUsername(''); // not logged in
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
     <header style={styles.wrapper}>
       <div style={styles.header}>
@@ -8,7 +36,11 @@ function Header() {
         <nav style={styles.nav}>
           <a href="/Vocabulary" style={styles.navLink}>Vocabulary</a>
           <a href="/Translate" style={styles.navLink}>Translate</a>
-          <a href="/SignIn" style={styles.navLink}>Sign In</a>
+          {username === null ? null : username ? (
+            <span style={styles.navLink}>Hi, {username}</span>
+          ) : (
+            <a href="/SignIn" style={styles.navLink}>Sign In</a>
+          )}
         </nav>
       </div>
     </header>
@@ -20,7 +52,6 @@ const styles = {
     width: '100%',
     backgroundColor: '#fff',
     borderBottom: '1px solid #eee',
-    // position : 'fixed'
   },
   header: {
     maxWidth: '1200px',

@@ -12,10 +12,9 @@ const SignGrid = ({signs}) => {
       <div style={style.grid}>
         {signs && signs.length > 0 ?(
           signs.map((sign, index) => 
-          <div style={style.signCard} key={index}>
+          <div style={style.signCard} onClick={() => setIsPopupOpen(sign)} key={index}>
             <SignCard
               word={sign.name}
-              onClick={() => setIsPopupOpen(sign)}
             />
           </div>
         )) : (

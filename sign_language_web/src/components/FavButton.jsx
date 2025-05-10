@@ -1,38 +1,50 @@
-import React, { useState } from 'react'
-import { Heart } from 'lucide-react';
+import React, { useState } from "react";
+import { Heart } from "lucide-react";
 
 function FavButton() {
-    const [isFavorite,setIsFavorite] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   return (
-    <button
-        onClick={() => setIsFavorite(true)}
-        style={style.favbutton}
-        className={`flex items-center gap-2 py-2 px-4 rounded-md text-white font-medium transition-all ${
-            isFavorite
-              ? 'bg-blue-600 hover:bg-blue-700'
-              : 'bg-blue-500 hover:bg-blue-600'
-          }`}
-    >
-        <Heart
-        size={18}
-        fill= {isFavorite ? 'white' : 'none'} />
-        <span>Favorite</span>
+    <button onClick={() => setIsFavorite(!isFavorite)} style={style.favbutton}>
+      {isFavorite ? (
+        <div>
+          <Heart size={15} fill="white" />
+          <span style={style.text}>Favorited</span>
+        </div>
+      ) : (
+        <div>
+          <Heart size={15} fill="none" />
+          <span style={style.text}>Add to Favorites</span>
+        </div>
+      )}
     </button>
-  )
+  );
 }
 const style = {
-    favbutton : {
-        display : 'flex',
-        alignItems : 'center',
-        gap : '2',
-        paddingTop : '2',
-        paddingBottom : '2',
-        paddingLeft : '4',
-        paddingRight : '4',
-        borderRadius : '200px',
-        color : 'white',
-    }
-}
+  favbutton: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "6px",
+    backgroundColor: "#4f46e5",
+    color: "white",
+    border: "none",
+    borderRadius: "6px",
+    padding: "8px 16px",
+    fontWeight: 500,
+    fontSize: "14px",
+    cursor: "pointer",
+  },
+  text: {
+    color: "white",
+    fontWeight: "bold",
+    marginLeft : '10px'
+  },
+  button: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+};
 
-export default FavButton
+export default FavButton;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { registerUser } from '../api/registerUser'; // ⬅️ Import your new API function
+import { registerUser } from '../api/registerUser';
 
 function Register() {
   const navigate = useNavigate();
@@ -12,6 +12,7 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
 
     if (password !== confirmPassword) {
       setError('Passwords do not match');
@@ -19,8 +20,8 @@ function Register() {
     }
 
     try {
-      await registerUser(email, password, username); // ⬅️ Use the API
-      navigate('/');
+      await registerUser(email, password, username);
+      navigate('/RegisterSuccess');
     } catch (err) {
       setError(err.message);
     }

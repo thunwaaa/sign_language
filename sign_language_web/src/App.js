@@ -4,6 +4,7 @@ import Favorite from './routes/Favorite';
 import Home from './routes/Home';
 import SignIn from './routes/Login';
 import Register from './routes/Register';
+import RegisterSuccess from "./routes/RegisterSuccess";
 import Translate from './routes/Translate';
 import Vocabulary from './routes/Vocab';
 
@@ -18,6 +19,7 @@ function App() {
         <Route path="/Vocabulary" element={<Vocabulary />} />
         <Route path="/Translate" element={<Translate />} />
         <Route path="/Favourite" element={<Favorite />} />
+        <Route path="/RegisterSuccess" element={<RegisterSuccess />} />
       </Routes>
     </Router>
   );

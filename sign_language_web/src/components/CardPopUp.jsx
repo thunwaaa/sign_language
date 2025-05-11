@@ -11,15 +11,18 @@ const CardPopUp = ({ word, onClose }) => {
         <div style={style.line}></div>
         <div style={{display:'flex'}}>
           <div style={style.container3d}></div>
-          <div style={style.content}>
-            <h4>Meaning</h4>
-            <p>A common greeting used when meeting someone.</p>
-            <h4>Description</h4>
-            <p>
+          <div style={style.contentContainer}>
+            <h4 style={style.contentTitle}>Meaning :</h4>
+            <p style={style.content}>A common greeting used when meeting someone.</p>
+            <h4 style={style.contentTitle}>Description :</h4>
+            <p style={style.content}>
               Extend your dominant hand forward with palm facing up, then move
               it slightly upward and to the side.
             </p>
-            <FavButton />
+            <div style={{display :'flex' ,justifyContent : 'center',marginTop :'80px'}}>
+              <FavButton />
+            </div>
+            
           </div>
         </div>
         <X style={style.closeButton} onClick={onClose} />
@@ -79,10 +82,20 @@ const style = {
     width:'100%',
     marginBottom :'20px'
   },
-  content : {
+  contentContainer : {
     display : 'flex',
     flexDirection : 'column',
     
+  },
+  contentTitle : {
+    textAlign : 'left',
+    margin : '10px',
+    marginBottom : '5px'
+  },
+  content : {
+    textAlign : 'left',
+    margin : '10px',
+    marginTop : '-5px'
   }
 };
 

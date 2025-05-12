@@ -1,5 +1,4 @@
-// src/api/registerUser.js
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
@@ -14,6 +13,9 @@ export const registerUser = async (email, password, username) => {
     username,
     email,
   });
+
+  // Send email verification
+  await sendEmailVerification(user);
 
   return user;
 };

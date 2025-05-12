@@ -1,5 +1,5 @@
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase'; // adjust the path if needed
 
@@ -10,15 +10,24 @@ function SignIn() {
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      navigate('/');
-    } catch (err) {
-      setError(err.message);
+  e.preventDefault();
+  setError('');
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    if (!user.emailVerified) {
+      setError("Please verify your email before logging in.");
+      await auth.signOut(); // Prevent access
+      return;
     }
-  };
+
+    navigate('/');
+  } catch (err) {
+    setError('Incorrect email or password.');
+  }
+};
+
 
   return (
     <div style={styles.container}>
@@ -55,7 +64,7 @@ function SignIn() {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          {error && <p style={{ color: 'red' }}> Incorrect Email or Password </p>}
+          {error && <p style={{ color: 'red' }}>{error}</p>}
 
           <button type="submit" style={styles.button}>Sign In</button>
 

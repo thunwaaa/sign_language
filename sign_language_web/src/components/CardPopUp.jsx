@@ -1,7 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import FavButton from "./FavButton";
-import { Weight } from "lucide-react";
 import { X } from "lucide-react";
+import FavButton from "./FavButton";
 
 const CardPopUp = ({ word, onClose }) => {
   return (

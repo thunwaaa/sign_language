@@ -1,11 +1,13 @@
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase';
 
 function Header() {
   const [username, setUsername] = useState(null); // null = loading, '' = not logged in
   const [showDropdown, setShowDropdown] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -35,9 +37,15 @@ function Header() {
       await signOut(auth);
       setUsername('');
       setShowDropdown(false);
+      navigate('/signin');
     } catch (err) {
       console.error('Error signing out:', err);
     }
+  };
+
+  const handleProfile = () => {
+    setShowDropdown(false);
+    navigate('/UserProfile');
   };
 
   const toggleDropdown = () => {
@@ -49,17 +57,21 @@ function Header() {
       <div style={styles.header}>
         <a href="/" style={styles.logo}>HandsUp!</a>
         <nav style={styles.nav}>
+          <a href="/" style={styles.navLink}>Home</a>
           <a href="/Vocabulary" style={styles.navLink}>Vocabulary</a>
           <a href="/Translate" style={styles.navLink}>Translate</a>
           {username === null ? null : username ? (
             <div style={styles.dropdownWrapper}>
               <span style={styles.navLink} onClick={toggleDropdown}>
-                Hi, {username}
+                Hi, {username} ⬇
               </span>
               {showDropdown && (
                 <div style={styles.dropdown}>
+                  <button onClick={handleProfile} style={styles.dropdownItem}>
+                    👤 User Profile
+                  </button>
                   <button onClick={handleLogout} style={styles.dropdownItem}>
-                    Log Out
+                    🔓 Log Out
                   </button>
                 </div>
               )}
@@ -79,6 +91,7 @@ const styles = {
     backgroundColor: '#fff',
     borderBottom: '1px solid #eee',
     position: 'relative',
+    zIndex: 100,
   },
   header: {
     maxWidth: '1200px',
@@ -105,6 +118,7 @@ const styles = {
     color: '#000',
     fontWeight: '500',
     cursor: 'pointer',
+    position: 'relative',
   },
   dropdownWrapper: {
     position: 'relative',
@@ -115,19 +129,31 @@ const styles = {
     right: 0,
     backgroundColor: '#fff',
     border: '1px solid #ccc',
-    borderRadius: '4px',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-    zIndex: 10,
+    borderRadius: '6px',
+    boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+    zIndex: 100,
+    minWidth: '160px',
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'hidden',
   },
   dropdownItem: {
-    padding: '0.5rem 1rem',
+    padding: '0.75rem 1rem',
     width: '100%',
     textAlign: 'left',
     border: 'none',
     background: 'none',
     cursor: 'pointer',
     fontWeight: '500',
+    color: '#333',
+    backgroundColor: '#fff',
+    transition: 'background 0.2s',
   },
+};
+
+// Add hover effect via inline style object
+styles.dropdownItem[':hover'] = {
+  backgroundColor: '#f5f5f5',
 };
 
 export default Header;

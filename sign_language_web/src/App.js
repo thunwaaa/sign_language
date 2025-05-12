@@ -7,6 +7,7 @@ import SignIn from './routes/Login';
 import Register from './routes/Register';
 import RegisterSuccess from "./routes/RegisterSuccess";
 import Translate from './routes/Translate';
+import UserProfile from "./routes/UserProfile";
 import Vocabulary from './routes/Vocab';
 
 
@@ -22,6 +23,7 @@ function App() {
         <Route path="/Favourite" element={<Favorite />} />
         <Route path="/RegisterSuccess" element={<RegisterSuccess />} />
         <Route path="/CheckEmail" element={<CheckEmail />} />
+        <Route path="/UserProfile" element={<UserProfile />} />
       </Routes>
     </Router>
   );

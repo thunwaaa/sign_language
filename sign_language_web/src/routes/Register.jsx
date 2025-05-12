@@ -21,7 +21,7 @@ import { registerUser } from '../api/registerUser';
 
       try {
         await registerUser(email, password, username);
-        navigate('/RegisterSuccess');
+        navigate('/CheckEmail');
       } catch (err) {
         setError(err.message);
       }

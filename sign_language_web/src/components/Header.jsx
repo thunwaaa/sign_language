@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase';
 
 function Header() {
-  const [username, setUsername] = useState(null); // null = loading, '' = not logged in
+  const [username, setUsername] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
 

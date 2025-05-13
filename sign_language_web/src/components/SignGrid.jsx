@@ -1,32 +1,40 @@
-import React, { useContext, useState } from "react";
-import signs from "../data/signs";
+import React, { useState } from "react";
 import CardPopUp from "./CardPopUp";
-import FavButton from "./FavButton";
 import SignCard from "./SignCard";
 
 const SignGrid = ({signs}) => {
-  const [isPopupOpen, setIsPopupOpen] = useState(null);
+  const [selectedSign, setSelectedSign] = useState(null);
+
+  const handleCardClick = (sign) => {
+    setSelectedSign(sign);
+  };
 
   return (
     <div>
       <div style={style.grid}>
-        {signs && signs.length > 0 ?(
-          signs.map((sign, index) => 
-          <div style={style.signCard} onClick={() => setIsPopupOpen(sign)} key={index}>
-            <SignCard
-              word={sign.name}
-            />
-          </div>
-        )) : (
+        {signs && signs.length > 0 ? (
+          signs.map((sign) => (
+            <div 
+              style={style.signCard} 
+              // onClick={() => setSelectedSign(sign)} 
+              key={sign.id}
+            >
+              <SignCard
+                word={sign.word}
+                thumbnailUrl={sign.thumbnailURL}
+                onClick={() => handleCardClick(sign)}
+              />
+            </div>
+          ))
+        ) : (
           <p style={style.emptyData}>No data available in sign vocabulary</p>
         )}
-        
       </div>
 
-      {isPopupOpen && (
+      {selectedSign && (
         <CardPopUp
-          word={isPopupOpen.name}
-          onClose={() => setIsPopupOpen(null)}
+          signId={selectedSign.id}
+          onClose={() => setSelectedSign(null)}
         />
       )}
     </div>
@@ -36,11 +44,12 @@ const SignGrid = ({signs}) => {
 const style = {
   grid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(300px,1fr))",
+    gridTemplateColumns: "repeat(3, 1fr)", 
     gap: "1.5rem",
     margin: "1.5rem",
     paddingLeft: "15%",
     paddingRight: "15%",
+    fontSize: "20px",
   },
   signCard: {
     backgroundColor: "white",

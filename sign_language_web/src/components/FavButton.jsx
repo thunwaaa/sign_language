@@ -8,12 +8,12 @@ function FavButton() {
     <button onClick={() => setIsFavorite(!isFavorite)} style={style.favbutton}>
       {isFavorite ? (
         <div>
-          <Heart size={15} fill="white" />
+          <Heart size={18} fill="white" />
           <span style={style.text}>Favorited</span>
         </div>
       ) : (
         <div>
-          <Heart size={15} fill="none" />
+          <Heart size={18} fill="none" />
           <span style={style.text}>Add to Favorites</span>
         </div>
       )}
@@ -38,7 +38,8 @@ const style = {
   text: {
     color: "white",
     fontWeight: "bold",
-    marginLeft : '10px'
+    marginLeft : '10px',
+    fontSize:'18px'
   },
   button: {
     display: "flex",

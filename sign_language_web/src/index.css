@@ -1,4 +1,4 @@
-/* ลองใช้ @import แทน @tailwind */
+@import url('https://fonts.googleapis.com/css2?family=Mitr:wght@200;300;400;500;600;700&display=swap');
 
 body {
   margin: 0;
@@ -7,6 +7,10 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.thai-font {
+  font-family: 'Mitr', sans-serif;
 }
 
 code {

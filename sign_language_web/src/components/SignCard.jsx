@@ -1,10 +1,23 @@
 import React from 'react'
 
-const SignCard = ({word, onClick}) => {
+const SignCard = ({ word, thumbnailUrl, onClick }) => {
   return (
-    <div  onClick={onClick}>
-        <div >
-            <p>3D model</p>
+    <div onClick={onClick} className='thai-font'>
+        <div>
+            {thumbnailUrl ? (
+                <img 
+                    src={thumbnailUrl} 
+                    alt={word}
+                    style={{
+                        width: '100%',
+                        height: '200px',
+                        objectFit: 'cover',
+                        borderRadius: '8px'
+                    }}
+                />
+            ) : (
+                <p>3D model</p>
+            )}
         </div>
         <div>
             <p>{word}</p>

@@ -4,12 +4,19 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { auth, db } from '../firebase';
+import SignCard from '../components/SignCard';
+import CardPopUp from '../components/CardPopUp';
 
 function UserProfile() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
   const [favorites, setFavorites] = useState([]);
+  const [selectedSign, setSelectedSign] = useState(null);
+  
+    const handleCardClick = (fav) => {
+      setSelectedSign(fav);
+    };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -71,17 +78,28 @@ function UserProfile() {
           ) : (
             favorites.map((fav, index) => (
               <div key={index} style={styles.favoriteCard}>
-                <img
-                  src={fav.image || '/default-hand-icon.png'}
-                  alt={fav.label}
+                <SignCard
+                word={fav.word}
+                thumbnailUrl={fav.thumbnailURL}
+                onClick={() => handleCardClick(fav)}
+              />
+                {/* <img
+                  src={fav.thumbnailURL || '/default-hand-icon.png'}
+                  alt={fav.word}
                   style={styles.favoriteImage}
                 />
-                <p>{fav.label}</p>
+                <p>{fav.word}</p> */}
               </div>
             ))
           )}
         </div>
       </div>
+      {selectedSign && (
+        <CardPopUp
+          signId={selectedSign.id}
+          onClose={() => setSelectedSign(null)}
+        />
+      )}
 
       {/* Decorative bubbles */}
       <div style={styles.bubbles}>
@@ -151,15 +169,17 @@ const styles = {
   },
   grid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
     gap: '1rem',
     marginTop: '1rem',
+    zIndex:100
   },
   favoriteCard: {
     border: '1px solid #ddd',
     borderRadius: '10px',
     padding: '1rem',
     textAlign: 'center',
+    cursor:'pointer',
   },
   favoriteImage: {
     width: '50px',
@@ -175,6 +195,7 @@ const styles = {
   height: '100%',
   overflow: 'hidden',
   pointerEvents: 'none',
+  zIndex: -5
 },
   circle: {
     position: 'absolute',

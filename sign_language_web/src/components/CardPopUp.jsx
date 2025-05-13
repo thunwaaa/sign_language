@@ -62,7 +62,7 @@ const CardPopUp = ({ signId, onClose }) => {
               {sign.description}
             </p>
             <div style={style.favButtonContainer}>
-              <FavButton />
+              <FavButton sign={sign} />
             </div>
           </div>
         </div>

@@ -9,10 +9,29 @@ import RegisterSuccess from "./routes/RegisterSuccess";
 import Translate from './routes/Translate';
 import UserProfile from "./routes/UserProfile";
 import Vocabulary from './routes/Vocab';
-
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
+    <>
+    <Toaster
+        position="top-right"
+        toastOptions={{
+          success: {
+            style: {
+              background: '#4f46e5',
+              color: 'white',
+            },
+          },
+          error: {
+            style: {
+              background: '#ef4444',
+              color: 'white',
+            },
+          },
+          duration: 2000,
+        }}
+      />
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -26,6 +45,8 @@ function App() {
         <Route path="/UserProfile" element={<UserProfile />} />
       </Routes>
     </Router>
+    </>
+    
   );
 }
 

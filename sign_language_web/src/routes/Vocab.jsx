@@ -69,9 +69,9 @@ const Vocab = () => {
 };
 const styles = {
   container: {
+    backgroundColor:'#f7f8fa',
     padding: "2rem",
     textAlign: "center",
-    backgroundColor: "#f5f5f5",
     minHeight: "100vh",
   },
   heading: {

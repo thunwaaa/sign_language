@@ -1,23 +1,29 @@
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Man from '../components/A-man-holding-a-briefcase-going-to-work-1.png';
 import Header from '../components/Header';
 
-
 function Home() {
   const navigate = useNavigate();
+  const auth = getAuth();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        navigate('/Vocabulary');
-      }
+      setIsLoggedIn(!!user);
     });
-
     return () => unsubscribe();
-  }, [navigate]);
+  }, []);
+
+  const handleStartClick = () => {
+    if (isLoggedIn) {
+      navigate('/Vocabulary');
+    } else {
+      navigate('/Login');
+    }
+  };
+
   return (
     <>
       <Header />
@@ -32,7 +38,7 @@ function Home() {
           <p>
             เว็บไซต์เพื่อฝึกและเรียนรู้ภาษามือหรือการสื่อสารด้วยมือ ออกแบบมาเพื่อทั้งผู้เรียนและผู้สื่อสารจริง รองรับผู้ที่มีความบกพร่องทางการได้ยิน ช่วยเรียนรู้ หรือสื่อสารในชีวิตประจำวัน
           </p>
-          <button style={styles.ctaButton} onClick={GoLogin}>Let's Start !</button>
+          <button style={styles.ctaButton}>Let's Start !</button>
         </div>
         <img src={Man} alt="Hero" style={styles.heroImage} />
       </div>

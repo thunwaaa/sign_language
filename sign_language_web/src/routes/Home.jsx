@@ -38,7 +38,7 @@ function Home() {
           <p>
             เว็บไซต์เพื่อฝึกและเรียนรู้ภาษามือหรือการสื่อสารด้วยมือ ออกแบบมาเพื่อทั้งผู้เรียนและผู้สื่อสารจริง รองรับผู้ที่มีความบกพร่องทางการได้ยิน ช่วยเรียนรู้ หรือสื่อสารในชีวิตประจำวัน
           </p>
-          <button style={styles.ctaButton}>Let's Start !</button>
+          <button style={styles.ctaButton} onClick={handleStartClick}>Let's Start !</button>
         </div>
         <img src={Man} alt="Hero" style={styles.heroImage} />
       </div>

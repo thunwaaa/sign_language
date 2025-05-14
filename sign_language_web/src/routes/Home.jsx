@@ -11,7 +11,7 @@ function Home() {
           <h1>
             Whether you're learning or communicating <span style={styles.highlight}>HandsUp!</span> is made for you.
           </h1>
-          <p>
+          <p className='thai-font'>
             เว็บไซต์เพื่อฝึกและเรียนรู้ภาษามือหรือการสื่อสารด้วยมือ ออกแบบมาเพื่อทั้งผู้เรียนและผู้สื่อสารจริง รองรับผู้ที่มีความบกพร่องทางการได้ยิน ช่วยเรียนรู้ หรือสื่อสารในชีวิตประจำวัน
           </p>
           <button style={styles.ctaButton}>Let's Start !</button>
@@ -43,12 +43,12 @@ function Home() {
       {/* Text */}
       <div style={styles.textBlock1}>
         <h3 style={styles.featureTitle}>Sign Language Vocabulary</h3>
-        <p style={styles.featureDesc}>
+        <p style={styles.featureDesc} className='thai-font'>
           เรียนรู้คำศัพท์ภาษามือไทยจากคลังคำศัพท์<br />
           มาพร้อมความหมาย ตัวอย่างคำภาพ<br />
           และการแสดงท่าทางมือ
         </p>
-        <p style={styles.featureDesc}>
+        <p style={styles.featureDesc} className='thai-font'>
           กด “Favorites” คำที่ชอบหรือใช้งาน<br />
           เพื่อเก็บไว้ดูภายหลัง
         </p>
@@ -62,11 +62,11 @@ function Home() {
       {/* Text */}
       <div style={styles.textBlock2}>
         <h3 style={styles.featureTitle} >Translate Text to Sign Language</h3>
-        <p style={styles.featureDesc}>
+        <p style={styles.featureDesc} className='thai-font'>
           แปลพิมพ์ข้อความภาษาไทย ระบบจะแสดงท่าทางภาษามือ<br />
           ผ่าน โมเดล 3 มิติ และดูประวัติการแปลข้อความได้ตลอดเวลา
         </p>
-        <p style={styles.featureDesc}>
+        <p style={styles.featureDesc} className='thai-font'>
           เหมาะสำหรับการเรียนรู้ การสื่อสาร<br />
           หรือใช้งานเชิงประจําวัน
         </p>

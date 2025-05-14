@@ -29,21 +29,21 @@ function Home() {
       <Header />
       <div style={styles.wrapper}>
 
-        {/* Hero Section */}
-        <section style={styles.heroSection}>
-          <div style={styles.heroContent}>
-            <div style={styles.textBox}>
-              <h1>
-                Whether you're learning or communicating <span style={styles.highlight}>HandsUp!</span> is made for you.
-              </h1>
-              <p>
-                เว็บไซต์เพื่อฝึกและเรียนรู้ภาษามือหรือการสื่อสารด้วยมือ ออกแบบมาเพื่อทั้งผู้เรียนและผู้สื่อสารจริง รองรับผู้ที่มีความบกพร่องทางการได้ยิน ช่วยเรียนรู้ หรือสื่อสารในชีวิตประจำวัน
-              </p>
-              <button style={styles.ctaButton} onClick={handleStartClick}>Let's Start !</button>
-            </div>
-            <img src={Man} alt="Hero" style={styles.heroImage} />
-          </div>
-        </section>
+      <section style={styles.heroSection}>
+      <div style={styles.heroContent}>
+        <div style={styles.textBox}>
+          <h1>
+            Whether you're learning or communicating <span style={styles.highlight}>HandsUp!</span> is made for you.
+          </h1>
+          <p>
+            เว็บไซต์เพื่อฝึกและเรียนรู้ภาษามือหรือการสื่อสารด้วยมือ ออกแบบมาเพื่อทั้งผู้เรียนและผู้สื่อสารจริง รองรับผู้ที่มีความบกพร่องทางการได้ยิน ช่วยเรียนรู้ หรือสื่อสารในชีวิตประจำวัน
+          </p>
+          <button style={styles.ctaButton}>Let's Start !</button>
+        </div>
+        <img src={Man} alt="Hero" style={styles.heroImage} />
+      </div>
+    </section>
+
 
         {/* Features Section */}
         <section style={styles.featuresSection}>
@@ -64,39 +64,39 @@ function Home() {
                 </div>
               </div>
 
-              <div style={styles.textBlock1}>
-                <h3 style={styles.featureTitle}>Sign Language Vocabulary</h3>
-                <p style={styles.featureDesc}>
-                  เรียนรู้คำศัพท์ภาษามือไทยจากคลังคำศัพท์<br />
-                  มาพร้อมความหมาย ตัวอย่างคำภาพ<br />
-                  และการแสดงท่าทางมือ
-                </p>
-                <p style={styles.featureDesc}>
-                  กด “Favorites” คำที่ชอบหรือใช้งาน<br />
-                  เพื่อเก็บไว้ดูภายหลัง
-                </p>
-                <div style={{ height: '1.5rem' }}></div>
-                <a href="/Vocabulary" style={styles.learnMore}>Learn More</a>
-              </div>
-            </div>
-
-            <div style={{ height: '9rem' }}></div>
-
-            {/* Translate Row */}
-            <div style={styles.featuresRow}>
-              <div style={styles.textBlock2}>
-                <h3 style={styles.featureTitle}>Translate Text to Sign Language</h3>
-                <p style={styles.featureDesc}>
-                  แปลพิมพ์ข้อความภาษาไทย ระบบจะแสดงท่าทางภาษามือ<br />
-                  ผ่าน โมเดล 3 มิติ และดูประวัติการแปลข้อความได้ตลอดเวลา
-                </p>
-                <p style={styles.featureDesc}>
-                  เหมาะสำหรับการเรียนรู้ การสื่อสาร<br />
-                  หรือใช้งานเชิงประจําวัน
-                </p>
-                <div style={{ height: '1.5rem' }}></div>
-                <a href="/Translate" style={styles.learnMore}>Learn More</a>
-              </div>
+      {/* Text */}
+      <div style={styles.textBlock1}>
+        <h3 style={styles.featureTitle}>Sign Language Vocabulary</h3>
+        <p style={styles.featureDesc}>
+          เรียนรู้คำศัพท์ภาษามือไทยจากคลังคำศัพท์<br />
+          มาพร้อมความหมาย ตัวอย่างคำภาพ<br />
+          และการแสดงท่าทางมือ
+        </p>
+        <p style={styles.featureDesc}>
+          กด “Favorites” คำที่ชอบหรือใช้งาน<br />
+          เพื่อเก็บไว้ดูภายหลัง
+        </p>
+        <div style={{ height: '1.5rem' }}></div>
+        <a href="/Vocabulary" style={styles.learnMore}>Learn More</a>
+      </div>
+    </div>
+    <div style={{ height: '9rem' }}></div>
+    {/* Translate Row */}
+    <div style={styles.featuresRow}>
+      {/* Text */}
+      <div style={styles.textBlock2}>
+        <h3 style={styles.featureTitle} >Translate Text to Sign Language</h3>
+        <p style={styles.featureDesc}>
+          แปลพิมพ์ข้อความภาษาไทย ระบบจะแสดงท่าทางภาษามือ<br />
+          ผ่าน โมเดล 3 มิติ และดูประวัติการแปลข้อความได้ตลอดเวลา
+        </p>
+        <p style={styles.featureDesc}>
+          เหมาะสำหรับการเรียนรู้ การสื่อสาร<br />
+          หรือใช้งานเชิงประจําวัน
+        </p>
+        <div style={{ height: '1.5rem' }}></div>
+        <a href="/Translate" style={styles.learnMore}>Learn More</a>
+      </div>
 
               <div style={styles.inputPreview}>
                 <p style={styles.inputText}>Type something . . .</p>

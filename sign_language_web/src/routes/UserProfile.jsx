@@ -100,6 +100,7 @@ function UserProfile() {
           onClose={() => setSelectedSign(null)}
         />
       )}
+      
 
       {/* Decorative bubbles */}
       <div style={styles.bubbles}>

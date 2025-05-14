@@ -57,7 +57,6 @@ function Header() {
       <div style={styles.header}>
         <a href="/" style={styles.logo}>HandsUp!</a>
         <nav style={styles.nav}>
-          <a href="/" style={styles.navLink}>Home</a>
           <a href="/Vocabulary" style={styles.navLink}>Vocabulary</a>
           <a href="/Translate" style={styles.navLink}>Translate</a>
           {username === null ? null : username ? (

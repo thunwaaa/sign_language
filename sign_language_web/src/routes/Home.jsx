@@ -1,121 +1,147 @@
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Man from '../components/A-man-holding-a-briefcase-going-to-work-1.png';
 import Header from '../components/Header';
+
 function Home() {
+  const navigate = useNavigate();
+  const auth = getAuth();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleStartClick = () => {
+    if (isLoggedIn) {
+      navigate('/Vocabulary');
+    } else {
+      navigate('/Login');
+    }
+  };
+
   return (
-    <div style={styles.wrapper}>
+    <>
       <Header />
+      <div style={styles.wrapper}>
 
-      <section style={styles.heroSection}>
-      <div style={styles.heroContent}>
-        <div style={styles.textBox}>
-          <h1>
-            Whether you're learning or communicating <span style={styles.highlight}>HandsUp!</span> is made for you.
-          </h1>
-          <p>
-            เว็บไซต์เพื่อฝึกและเรียนรู้ภาษามือหรือการสื่อสารด้วยมือ ออกแบบมาเพื่อทั้งผู้เรียนและผู้สื่อสารจริง รองรับผู้ที่มีความบกพร่องทางการได้ยิน ช่วยเรียนรู้ หรือสื่อสารในชีวิตประจำวัน
-          </p>
-          <button style={styles.ctaButton}>Let's Start !</button>
-        </div>
-        <img src={Man} alt="Hero" style={styles.heroImage} />
+        {/* Hero Section */}
+        <section style={styles.heroSection}>
+          <div style={styles.heroContent}>
+            <div style={styles.textBox}>
+              <h1>
+                Whether you're learning or communicating <span style={styles.highlight}>HandsUp!</span> is made for you.
+              </h1>
+              <p>
+                เว็บไซต์เพื่อฝึกและเรียนรู้ภาษามือหรือการสื่อสารด้วยมือ ออกแบบมาเพื่อทั้งผู้เรียนและผู้สื่อสารจริง รองรับผู้ที่มีความบกพร่องทางการได้ยิน ช่วยเรียนรู้ หรือสื่อสารในชีวิตประจำวัน
+              </p>
+              <button style={styles.ctaButton} onClick={handleStartClick}>Let's Start !</button>
+            </div>
+            <img src={Man} alt="Hero" style={styles.heroImage} />
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section style={styles.featuresSection}>
+          <div style={styles.innerWrapper}>
+            <h2 style={styles.sectionTitle}>Explore Our Features</h2>
+            <p style={styles.sectionDesc}>
+              HandsUp! offers powerful tools to help you learn and <br />
+              communicate using sign language.
+            </p>
+            <div style={{ height: '5rem' }}></div>
+
+            {/* Vocabulary Row */}
+            <div style={styles.featuresRow}>
+              <div style={styles.imageCard}>
+                <div style={styles.placeholderBox}></div>
+                <div style={styles.favoriteBox}>
+                  <span role="img" aria-label="heart">💙</span> Favorites
+                </div>
+              </div>
+
+              <div style={styles.textBlock1}>
+                <h3 style={styles.featureTitle}>Sign Language Vocabulary</h3>
+                <p style={styles.featureDesc}>
+                  เรียนรู้คำศัพท์ภาษามือไทยจากคลังคำศัพท์<br />
+                  มาพร้อมความหมาย ตัวอย่างคำภาพ<br />
+                  และการแสดงท่าทางมือ
+                </p>
+                <p style={styles.featureDesc}>
+                  กด “Favorites” คำที่ชอบหรือใช้งาน<br />
+                  เพื่อเก็บไว้ดูภายหลัง
+                </p>
+                <div style={{ height: '1.5rem' }}></div>
+                <a href="/Vocabulary" style={styles.learnMore}>Learn More</a>
+              </div>
+            </div>
+
+            <div style={{ height: '9rem' }}></div>
+
+            {/* Translate Row */}
+            <div style={styles.featuresRow}>
+              <div style={styles.textBlock2}>
+                <h3 style={styles.featureTitle}>Translate Text to Sign Language</h3>
+                <p style={styles.featureDesc}>
+                  แปลพิมพ์ข้อความภาษาไทย ระบบจะแสดงท่าทางภาษามือ<br />
+                  ผ่าน โมเดล 3 มิติ และดูประวัติการแปลข้อความได้ตลอดเวลา
+                </p>
+                <p style={styles.featureDesc}>
+                  เหมาะสำหรับการเรียนรู้ การสื่อสาร<br />
+                  หรือใช้งานเชิงประจําวัน
+                </p>
+                <div style={{ height: '1.5rem' }}></div>
+                <a href="/Translate" style={styles.learnMore}>Learn More</a>
+              </div>
+
+              <div style={styles.inputPreview}>
+                <p style={styles.inputText}>Type something . . .</p>
+              </div>
+            </div>
+
+            <div style={{ height: '9rem' }}></div>
+
+            {/* Final CTA */}
+            <div style={styles.finalCTA}>
+              <h3 style={styles.finalTitle}>Ready to start your sign language journey ?</h3>
+              <p style={styles.finalDesc}>
+                Join HandsUp! today and connect with the sign language community.
+              </p>
+              <div style={{ height: '5rem' }}></div>
+              <button style={styles.ctaButton} onClick={handleStartClick}>Let's Start !</button>
+            </div>
+          </div>
+          <div style={{ height: '6rem' }}></div>
+        </section>
+
+        {/* Footer */}
+        <footer style={styles.footer}>
+          <div>
+            <h4>HandsUp!</h4>
+            <p>
+              HandsUp! empowers everyone to learn and use sign language.
+              Learn, translate, and connect with confidence.
+            </p>
+          </div>
+          <div>
+            <h4>Navigation</h4>
+            <a href="/Vocabulary">Vocabulary</a><br />
+            <a href="/Translate">Translate</a>
+          </div>
+          <div>
+            <h4>Contact Us</h4>
+            <p></p>
+          </div>
+        </footer>
       </div>
-    </section>
-
-
-      {/* Features Section */}
-<section style={styles.featuresSection}>
-  <div style={styles.innerWrapper}>
-    <h2 style={styles.sectionTitle}>Explore Our Features</h2>
-    <p style={styles.sectionDesc}>
-      HandsUp! offers powerful tools to help you learn and <br />
-      communicate using sign language.
-    </p>
-    <div style={{ height: '5rem' }}></div>
-    {/* Vocabulary Row */}
-    <div style={styles.featuresRow}>
-      {/* Favorites Card */}
-      <div style={styles.imageCard}>
-        <div style={styles.placeholderBox}></div>
-        <div style={styles.favoriteBox}>
-          <span role="img" aria-label="heart">💙</span> Favorites
-        </div>
-      </div>
-
-      {/* Text */}
-      <div style={styles.textBlock1}>
-        <h3 style={styles.featureTitle}>Sign Language Vocabulary</h3>
-        <p style={styles.featureDesc}>
-          เรียนรู้คำศัพท์ภาษามือไทยจากคลังคำศัพท์<br />
-          มาพร้อมความหมาย ตัวอย่างคำภาพ<br />
-          และการแสดงท่าทางมือ
-        </p>
-        <p style={styles.featureDesc}>
-          กด “Favorites” คำที่ชอบหรือใช้งาน<br />
-          เพื่อเก็บไว้ดูภายหลัง
-        </p>
-        <div style={{ height: '1.5rem' }}></div>
-        <a href="/Vocabulary" style={styles.learnMore}>Learn More</a>
-      </div>
-    </div>
-    <div style={{ height: '9rem' }}></div>
-    {/* Translate Row */}
-    <div style={styles.featuresRow}>
-      {/* Text */}
-      <div style={styles.textBlock2}>
-        <h3 style={styles.featureTitle} >Translate Text to Sign Language</h3>
-        <p style={styles.featureDesc}>
-          แปลพิมพ์ข้อความภาษาไทย ระบบจะแสดงท่าทางภาษามือ<br />
-          ผ่าน โมเดล 3 มิติ และดูประวัติการแปลข้อความได้ตลอดเวลา
-        </p>
-        <p style={styles.featureDesc}>
-          เหมาะสำหรับการเรียนรู้ การสื่อสาร<br />
-          หรือใช้งานเชิงประจําวัน
-        </p>
-        <div style={{ height: '1.5rem' }}></div>
-        <a href="/Translate" style={styles.learnMore}>Learn More</a>
-      </div>
-
-      {/* Input Preview */}
-      <div style={styles.inputPreview}>
-        <p style={styles.inputText}>Type something . . .</p>
-      </div>
-    </div>
-    <div style={{ height: '9rem' }}></div>
-    {/* Final CTA */}
-    <div style={styles.finalCTA}>
-      <h3 style={styles.finalTitle}>Ready to start your sign language journey ?</h3>
-      <p style={styles.finalDesc}>
-        Join HandsUp! today and connect with the sign language community.
-      </p>
-      <div style={{ height: '5rem' }}></div>
-      <a href="/Translate" style={styles.ctaButton}>Let's Start !</a>
-    </div>
-  </div>
-  <div style={{ height: '6rem' }}></div>
-</section>
-
-
-      {/* Footer */}
-      <footer style={styles.footer}>
-        <div>
-          <h4>HandsUp!</h4>
-          <p>
-            HandsUp! empowers everyone to learn and use sign language.
-            Learn, translate, and connect with confidence.
-          </p>
-        </div>
-        <div>
-          <h4>Navigation</h4>
-          <a href="/Vocabulary">Vocabulary</a><br />
-          <a href="/Translate">Translate</a>
-        </div>
-        <div>
-          <h4>Contact Us</h4>
-          <p></p>
-        </div>
-      </footer>
-    </div>
+    </>
   );
 }
+
 
 const styles = {
   wrapper: {

@@ -1,7 +1,8 @@
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../firebase'; // adjust the path if needed
+
 
 function SignIn() {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ function SignIn() {
     <div style={styles.container}>
       <div style={styles.leftSection}>
         <h1 style={styles.welcome}>
-          Welcome back to <span style={styles.brand}>HandsUp!</span>
+          Welcome back to <Link href="/" style={styles.brand} >HandsUp!</Link>
         </h1>
         <div style={styles.circles}>
           <div style={{ ...styles.circle, ...styles.circle1 }} />
@@ -98,9 +99,12 @@ const styles = {
     fontWeight: 'bold',
     color: '#000',
     maxWidth: '400px',
+    zIndex: 2,
   },
-  brand: {
+  brand: { 
     color: '#3B4CCA',
+    cursor: 'pointer',
+    zIndex: 100,
   },
   circles: {
     position: 'absolute',
@@ -192,6 +196,9 @@ const styles = {
     textDecoration: 'none',
     marginLeft: '0.3rem',
   },
+  h1: {
+    zIndex: 100,
+  }
 };
 
 export default SignIn;

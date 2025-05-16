@@ -2,6 +2,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { addDoc, collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
+import videoMap from '../data/videoMap';
 import { auth, db } from '../firebase';
 
 function Translate() {
@@ -51,6 +52,8 @@ function Translate() {
     return () => unsubscribe();
   }, [user]);
 
+  const currentVideoId = videoMap[text.trim()];
+
   return (
     <>
       <Header />
@@ -64,7 +67,7 @@ function Translate() {
             onChange={(e) => setText(e.target.value)}
             style={styles.textarea}
           />
-          <button onClick={handleTranslate} style={styles.button}>Translate</button>
+          <button onClick={handleTranslate} style={styles.button}>Save Translation</button>
 
           {/* History */}
           <div style={styles.historyBox}>
@@ -83,12 +86,23 @@ function Translate() {
           </div>
         </div>
 
-        {/* 3D preview */}
+        {/* Video Display */}
         <div style={styles.rightPanel}>
-          <h2>3D Hand Preview</h2>
-          <div style={styles.handPlaceholder}>
-            <p style={{ color: '#aaa' }}>[3D hand animation for: {text || '...' }]</p>
-          </div>
+          <h2>Sign Language Video</h2>
+          {text.trim() && currentVideoId ? (
+            <iframe
+              title="Sign Video"
+              src={`https://drive.google.com/file/d/${currentVideoId}/preview`}
+              width="100%"
+              height="300"
+              allow="autoplay"
+              style={{ borderRadius: '10px', border: 'none' }}
+            ></iframe>
+          ) : (
+            <div style={styles.handPlaceholder}>
+              <p style={{ color: '#aaa' }}>[No video available for: {text || '...'}]</p>
+            </div>
+          )}
         </div>
       </div>
     </>

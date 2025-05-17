@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import './App.css';
 import CheckEmail from "./routes/CheckEmail";
+import EditProfile from "./routes/EditProfile";
 import Favorite from './routes/Favorite';
 import Home from './routes/Home';
 import { default as Login, default as SignIn } from './routes/Login';
@@ -44,6 +45,7 @@ function App() {
         <Route path="/RegisterSuccess" element={<RegisterSuccess />} />
         <Route path="/CheckEmail" element={<CheckEmail />} />
         <Route path="/UserProfile" element={<UserProfile />} />
+        <Route path="/EditProfile" element={<EditProfile />} />
       </Routes>
     </Router>
   );

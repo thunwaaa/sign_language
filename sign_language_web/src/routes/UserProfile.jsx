@@ -2,10 +2,10 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
-import { auth, db } from '../firebase';
-import SignCard from '../components/SignCard';
 import CardPopUp from '../components/CardPopUp';
+import Header from '../components/Header';
+import SignCard from '../components/SignCard';
+import { auth, db } from '../firebase';
 
 function UserProfile() {
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ function UserProfile() {
   };
 
   const handleEditProfile = () => {
-    navigate('/edit-profile');
+    navigate('/EditProfile');
   };
 
   if (!userData) return <div>Loading...</div>;

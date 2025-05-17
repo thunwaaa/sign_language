@@ -1,12 +1,16 @@
 import { X } from "lucide-react";
 import FavButton from "./FavButton";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getSignById } from "../api/vocab";
+import ReactPlayer from 'react-player';
 
 const CardPopUp = ({ signId, onClose }) => {
   const [sign, setSign] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [videoError, setVideoError] = useState(false);
+  const [videoLoading, setVideoLoading] = useState(true);
+  const playerRef = useRef(null);
 
   useEffect(() => {
     async function fetchSignDetails() {
@@ -21,6 +25,15 @@ const CardPopUp = ({ signId, onClose }) => {
     }
     fetchSignDetails();
   }, [signId]);
+
+  const handleVideoError = () => {
+    setVideoError(true);
+    setVideoLoading(false);
+  };
+
+  const handleVideoLoad = () => {
+    setVideoLoading(false);
+  };
 
   if (loading)
     return (
@@ -45,12 +58,57 @@ const CardPopUp = ({ signId, onClose }) => {
         <div style={style.line}></div>
         <div style={style.contentLayout}>
           <div style={style.container3d}>
-            {/* ตรงนี้จะใส่ 3D Model viewer component */}
-            <img
-              src={sign.modelURL}
-              alt={sign.word}
-              style={style.modelImage}
-            />
+            {videoLoading && (
+              <div style={style.videoLoading}>กำลังโหลดวิดีโอ...</div>
+            )}
+            {videoError ? (
+              <div style={style.videoError}>
+                ไม่สามารถโหลดวิดีโอได้ กรุณาลองใหม่อีกครั้ง
+              </div>
+            ) : (
+              <div style={style.playerWrapper}>
+                <ReactPlayer
+                  ref={playerRef}
+                  url={sign.modelURL}
+                  loop={true}
+                  playing={true}
+                  width="180%"
+                  height="180%"
+                  style={style.modelImage}
+                  onError={handleVideoError}
+                  onReady={handleVideoLoad}
+                  config={{
+                    youtube: {
+                      playerVars: {
+                        autoplay: 1,
+                        showinfo: 0,
+                        controls: 0,
+                        modestbranding: 1,
+                        rel: 0,
+                        fs: 0,
+                        origin: window.location.origin,
+                        iv_load_policy: 3,
+                        disablekb: 1,
+                        cc_load_policy: 0,
+                        playsinline: 1,
+                        enablejsapi: 1,
+                        widget_referrer: window.location.origin,
+                        mute: 0,
+                        loop: 1,
+                        playlist: sign.modelURL.split('v=')[1],
+                        host: 'https://www.youtube-nocookie.com',
+                      },
+                      embedOptions: {
+                        showinfo: 0,
+                        modestbranding: 1,
+                      }
+                    }
+                  }}
+                />
+                {/* เพิ่มโอเวอร์เลย์เพื่อปกปิดโลโก้ YouTube */}
+                <div style={style.logoOverlay}></div>
+              </div>
+            )}
           </div>
           <div style={style.contentContainer}>
             <h4 style={style.contentTitle}>Meaning :</h4>
@@ -114,10 +172,10 @@ const style = {
   },
   contentLayout: {
     display: "flex",
-    height: "calc(100% - 70px)", // Subtracting title height and margins
+    height: "calc(100% - 70px)",
   },
   container3d: {
-    backgroundColor: "#D9D9D9",
+    backgroundColor: "#000000",
     flex: 2,
     marginRight: "20px",
     borderRadius: "10px",
@@ -125,13 +183,35 @@ const style = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    position: "relative",
+  },
+  playerWrapper: {
+    position: "relative",
+    width: "150%",
+    height: "150%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   modelImage: {
-    width: "100%",
-    height: "90%",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)", // ปรับจุดศูนย์กลางให้อยู่กึ่งกลางพอดี
+    width: "130% !important", // ปรับขนาดให้ใหญ่ขึ้น
+    height: "130% !important",
     objectFit: "contain",
-    maxHeight: "90%",
-    paddingBottom: "20px",
+    zIndex: 1,
+  },
+  // เพิ่มโอเวอร์เลย์สำหรับปิดโลโก้ที่มุมขวาล่าง
+  logoOverlay: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    width: "120px",  // ปรับขนาดให้พอดีกับโลโก้และชื่อช่อง
+    height: "60px",  // ปรับความสูงให้พอดีกับโลโก้
+    backgroundColor: "#000000", // สีดำเพื่อให้กลมกลืนกับพื้นหลัง
+    zIndex: 10,
   },
   line: {
     border: "1px solid rgba(188, 188, 188, 0.12)",
@@ -162,6 +242,24 @@ const style = {
     justifyContent: "center",
     marginTop: "auto",
     paddingBottom: "10px",
+  },
+  videoLoading: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
+    color: '#666',
+    fontSize: '16px',
+  },
+  videoError: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
+    color: '#dc3545',
+    fontSize: '16px',
+    textAlign: 'center',
+    padding: '20px',
   },
 };
 

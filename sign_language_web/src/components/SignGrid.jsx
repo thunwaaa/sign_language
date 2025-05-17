@@ -20,8 +20,8 @@ const SignGrid = ({signs}) => {
               key={sign.id}
             >
               <SignCard
+                sign={sign}
                 word={sign.word}
-                thumbnailUrl={sign.thumbnailURL}
                 onClick={() => handleCardClick(sign)}
               />
             </div>

@@ -1,5 +1,5 @@
 import { onAuthStateChanged } from 'firebase/auth';
-import { addDoc, collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import videoMap from '../data/videoMap';
@@ -9,6 +9,16 @@ function Translate() {
   const [text, setText] = useState('');
   const [user, setUser] = useState(null);
   const [history, setHistory] = useState([]);
+  const handleDelete = async (id) => {
+  if (!user || !id) return;
+  try {
+    const translationRef = doc(db, 'users', user.uid, 'translations', id);
+    await deleteDoc(translationRef);
+    // Firestore snapshot listener will automatically update UI
+  } catch (err) {
+    console.error('Error deleting translation:', err);
+  }
+};
 
   // Track logged-in user
   useEffect(() => {
@@ -34,7 +44,6 @@ function Translate() {
     }
   };
 
-  // Load user's history
   useEffect(() => {
     if (!user) return;
 
@@ -52,7 +61,8 @@ function Translate() {
     return () => unsubscribe();
   }, [user]);
 
-  const currentVideoId = videoMap[text.trim()];
+  const currentVideoId = videoMap[text.trim().toLowerCase()];
+
 
   return (
     <>
@@ -72,17 +82,31 @@ function Translate() {
           {/* History */}
           <div style={styles.historyBox}>
             <h3 style={{ marginBottom: '0.5rem' }}>Translation History</h3>
-            {history.length === 0 ? (
-              <p style={{ color: '#999' }}>No translations yet.</p>
-            ) : (
-              <ul style={styles.historyList}>
-                {history.map(item => (
-                  <li key={item.id} style={styles.historyItem}>
-                    {item.text} <span style={styles.timestamp}>({new Date(item.translatedAt).toLocaleString()})</span>
-                  </li>
-                ))}
-              </ul>
-            )}
+                {history.length === 0 ? (
+                  <p style={{ color: '#999' }}>No translations yet.</p>
+                    ) : (
+                      <ul style={styles.historyList}>
+                    {history.map(item => (
+                      <li key={item.id} style={styles.historyItem}>
+                        <span
+                          style={{ cursor: 'pointer', color: '#1a0dab' }}
+                          onClick={() => setText(item.text)}
+                        >
+                          {item.text}
+                        </span>
+                        <span style={styles.timestamp}>
+                          ({new Date(item.translatedAt).toLocaleString()})
+                        </span>
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          style={styles.deleteButton}
+                        >
+                          Delete
+                        </button>
+                      </li>
+                    ))}
+                </ul>
+                        )}
           </div>
         </div>
 
@@ -176,15 +200,27 @@ const styles = {
     margin: 0,
   },
   historyItem: {
-    padding: '0.3rem 0',
-    borderBottom: '1px solid #eee',
-    color: '#333',
+  padding: '0.3rem 0',
+  borderBottom: '1px solid #eee',
+  color: '#333',
+  transition: 'background 0.2s',
   },
   timestamp: {
     color: '#888',
     fontSize: '0.85rem',
     marginLeft: '0.5rem',
   },
+  deleteButton: {
+  marginLeft: '10px',
+  backgroundColor: '#e74c3c',
+  color: 'white',
+  border: 'none',
+  borderRadius: '5px',
+  padding: '3px 8px',
+  cursor: 'pointer',
+  fontSize: '0.8rem',
+},
+
 };
 
 export default Translate;

@@ -32,6 +32,7 @@ const videoMap = {
     what : "1Y8qYfPLFyG-VPuIhtK4ZA82fZYmwumEA", //https://drive.google.com/file/d/1Y8qYfPLFyG-VPuIhtK4ZA82fZYmwumEA/view?usp=drive_link
     "อยาก": "1Z1gueNJm4EG4mkEL38adV51eV9d403FH", //https://drive.google.com/file/d/1Z1gueNJm4EG4mkEL38adV51eV9d403FH/view?usp=drive_link
     want : "1Z1gueNJm4EG4mkEL38adV51eV9d403FH", //https://drive.google.com/file/d/1Z1gueNJm4EG4mkEL38adV51eV9d403FH/view?usp=drive_link
+    "ชอบ": "1ZUvRtIHIUKSiewPjNOzRYQoALYYtvRsq", //https://drive.google.com/file/d/1ZUvRtIHIUKSiewPjNOzRYQoALYYtvRsq/view?usp=drive_link
 };
 
 export default videoMap;

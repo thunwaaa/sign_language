@@ -3,12 +3,13 @@ import { Heart } from "lucide-react";
 import { auth, db } from "../firebase";
 import { arrayRemove, arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
 import toast from 'react-hot-toast';
+import { useNavigate } from "react-router-dom";
 
 const FavButton = ({ sign, onFavoriteChange }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
-  
   const checkFavoriteStatus = useCallback(async () => {
     setIsLoading(true);
     const user = auth.currentUser;
@@ -35,7 +36,10 @@ const FavButton = ({ sign, onFavoriteChange }) => {
     const user = auth.currentUser;
 
     if (!user) {
-      toast.error('Please sign in before adding to favorites');
+      const confirmLogin = window.confirm("กรุณาเข้าสู่ระบบก่อนเพิ่มในรายการโปรด\nต้องการไปที่หน้าเข้าสู่ระบบหรือไม่?");
+      if (confirmLogin) {
+        navigate("/signin");
+      }
       return;
     }
 
@@ -98,12 +102,12 @@ const FavButton = ({ sign, onFavoriteChange }) => {
       ) : isFavorite ? (
         <div style={style.button}>
           <Heart size={18} fill="white" />
-          <span style={style.text}>Favorited</span>
+          <span style={style.text}>Favorited!</span>
         </div>
       ) : (
         <div style={style.button}>
           <Heart size={18} />
-          <span style={style.text}>Add to Favorites</span>
+          <span style={style.text}>Add to favorite</span>
         </div>
       )}
     </button>

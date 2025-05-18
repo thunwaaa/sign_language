@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { getSignById } from "../api/vocab";
 import ReactPlayer from 'react-player';
 
-const CardPopUp = ({ signId, onClose }) => {
+const CardPopUp = ({ signId, onClose, onFavoriteChange }) => {
   const [sign, setSign] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -15,14 +15,27 @@ const CardPopUp = ({ signId, onClose }) => {
   useEffect(() => {
     async function fetchSignDetails() {
       try {
+        setLoading(true);
+        
+        if (!signId) {
+          throw new Error("Sign ID is missing");
+        }
         const signData = await getSignById(signId);
+        
+        
+        if (!signData) {
+          throw new Error("Failed to fetch sign data");
+        }
+        
         setSign(signData);
       } catch (error) {
-        setError(error.message);
+        console.error("Error fetching sign details:", error);
+        setError(error.message || "Failed to load sign details");
       } finally {
         setLoading(false);
       }
     }
+    
     fetchSignDetails();
   }, [signId]);
 
@@ -34,26 +47,44 @@ const CardPopUp = ({ signId, onClose }) => {
   const handleVideoLoad = () => {
     setVideoLoading(false);
   };
+  
+  
+  const handleFavoriteChange = (isNowFavorite, favoriteData) => {
+    
+    if (!isNowFavorite) {
+      onFavoriteChange?.(isNowFavorite, favoriteData);
+      onClose();
+    }
+  };
 
   if (loading)
     return (
       <div style={style.popupOverlay}>
-        <div style={style.popupBox}>Loading...</div>
+        <div style={style.popupBox}>
+          <div style={style.loadingIndicator}>กำลังโหลดข้อมูล...</div>
+        </div>
       </div>
     );
+    
   if (error)
     return (
       <div style={style.popupOverlay}>
-        <div style={style.popupBox}>{error}</div>
+        <div style={style.popupBox}>
+          <div style={style.errorMessage}>{error}</div>
+          <button style={style.closeButtonSmall} onClick={onClose}>
+            ปิด
+          </button>
+        </div>
       </div>
     );
+    
   if (!sign) return null;
 
   return (
     <div style={style.popupOverlay}>
       <div style={style.popupBox}>
         <h3 style={style.title} className="thai-font">
-          {sign.word}
+          {sign.word || "ไม่มีชื่อ"}
         </h3>
         <div style={style.line}></div>
         <div style={style.contentLayout}>
@@ -67,45 +98,46 @@ const CardPopUp = ({ signId, onClose }) => {
               </div>
             ) : (
               <div style={style.playerWrapper}>
-                <ReactPlayer
-                  ref={playerRef}
-                  url={sign.modelURL}
-                  loop={true}
-                  playing={true}
-                  width="180%"
-                  height="180%"
-                  style={style.modelImage}
-                  onError={handleVideoError}
-                  onReady={handleVideoLoad}
-                  config={{
-                    youtube: {
-                      playerVars: {
-                        autoplay: 1,
-                        showinfo: 0,
-                        controls: 0,
-                        modestbranding: 1,
-                        rel: 0,
-                        fs: 0,
-                        origin: window.location.origin,
-                        iv_load_policy: 3,
-                        disablekb: 1,
-                        cc_load_policy: 0,
-                        playsinline: 1,
-                        enablejsapi: 1,
-                        widget_referrer: window.location.origin,
-                        mute: 0,
-                        loop: 1,
-                        playlist: sign.modelURL.split('v=')[1],
-                        host: 'https://www.youtube-nocookie.com',
-                      },
-                      embedOptions: {
-                        showinfo: 0,
-                        modestbranding: 1,
+                {sign.modelURL && (
+                  <ReactPlayer
+                    ref={playerRef}
+                    url={sign.modelURL}
+                    loop={true}
+                    playing={true}
+                    width="180%"
+                    height="180%"
+                    style={style.modelImage}
+                    onError={handleVideoError}
+                    onReady={handleVideoLoad}
+                    config={{
+                      youtube: {
+                        playerVars: {
+                          autoplay: 1,
+                          showinfo: 0,
+                          controls: 0,
+                          modestbranding: 1,
+                          rel: 0,
+                          fs: 0,
+                          origin: window.location.origin,
+                          iv_load_policy: 3,
+                          disablekb: 1,
+                          cc_load_policy: 0,
+                          playsinline: 1,
+                          enablejsapi: 1,
+                          widget_referrer: window.location.origin,
+                          mute: 0,
+                          loop: 1,
+                          playlist: sign.modelURL.split('v=')[1],
+                          host: 'https://www.youtube-nocookie.com',
+                        },
+                        embedOptions: {
+                          showinfo: 0,
+                          modestbranding: 1,
+                        }
                       }
-                    }
-                  }}
-                />
-                {/* เพิ่มโอเวอร์เลย์เพื่อปกปิดโลโก้ YouTube */}
+                    }}
+                  />
+                )}
                 <div style={style.logoOverlay}></div>
               </div>
             )}
@@ -113,14 +145,17 @@ const CardPopUp = ({ signId, onClose }) => {
           <div style={style.contentContainer}>
             <h4 style={style.contentTitle}>Meaning :</h4>
             <p style={style.content} className="thai-font">
-              {sign.meaning}
+              {sign.meaning || "ไม่มีข้อมูล"}
             </p>
             <h4 style={style.contentTitle}>Description :</h4>
             <p style={style.content} className="thai-font">
-              {sign.description}
+              {sign.description || "ไม่มีข้อมูล"}
             </p>
             <div style={style.favButtonContainer}>
-              <FavButton sign={sign} />
+              <FavButton 
+                sign={sign} 
+                onFavoriteChange={handleFavoriteChange} 
+              />
             </div>
           </div>
         </div>
@@ -164,6 +199,15 @@ const style = {
     cursor: "pointer",
     color: "#555",
   },
+  closeButtonSmall: {
+    padding: "8px 16px",
+    backgroundColor: "#e74c3c",
+    color: "white",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+    marginTop: "10px",
+  },
   title: {
     fontSize: "30px",
     fontWeight: "500",
@@ -197,20 +241,19 @@ const style = {
     position: "absolute",
     top: "50%",
     left: "50%",
-    transform: "translate(-50%, -50%)", // ปรับจุดศูนย์กลางให้อยู่กึ่งกลางพอดี
-    width: "130% !important", // ปรับขนาดให้ใหญ่ขึ้น
+    transform: "translate(-50%, -50%)",
+    width: "130% !important",
     height: "130% !important",
     objectFit: "contain",
     zIndex: 1,
   },
-  // เพิ่มโอเวอร์เลย์สำหรับปิดโลโก้ที่มุมขวาล่าง
   logoOverlay: {
     position: "absolute",
     bottom: 0,
     right: 0,
-    width: "120px",  // ปรับขนาดให้พอดีกับโลโก้และชื่อช่อง
-    height: "60px",  // ปรับความสูงให้พอดีกับโลโก้
-    backgroundColor: "#000000", // สีดำเพื่อให้กลมกลืนกับพื้นหลัง
+    width: "120px",
+    height: "60px",
+    backgroundColor: "#000000",
     zIndex: 10,
   },
   line: {
@@ -259,6 +302,20 @@ const style = {
     color: '#dc3545',
     fontSize: '16px',
     textAlign: 'center',
+    padding: '20px',
+  },
+  loadingIndicator: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+    fontSize: '18px',
+    color: '#3B4CCA',
+  },
+  errorMessage: {
+    color: '#e74c3c',
+    textAlign: 'center',
+    fontSize: '18px',
     padding: '20px',
   },
 };

@@ -1,84 +1,115 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Heart } from "lucide-react";
 import { auth, db } from "../firebase";
 import { arrayRemove, arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
-import toast from 'react-hot-toast'
+import toast from 'react-hot-toast';
 
-const FavButton = ({ sign }) => {
+const FavButton = ({ sign, onFavoriteChange }) => {
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() =>{
-    const checkFavoriteStatus = async () => {
-      const user = auth.currentUser;
-      if (user) {
+  
+  const checkFavoriteStatus = useCallback(async () => {
+    setIsLoading(true);
+    const user = auth.currentUser;
+    if (user) {
+      try {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         const favorites = userDoc.data()?.favorites || [];
-        setIsFavorite(favorites.some(fav => fav.id === sign.id));
+        
+        if (sign && sign.id) {
+          setIsFavorite(favorites.some(fav => fav.id === sign.id));
+        }
+      } catch (error) {
+        console.error("Error checking favorite status:", error);
       }
-    };
+    }
+    setIsLoading(false);
+  }, [sign?.id]);
 
+  useEffect(() => {
     checkFavoriteStatus();
-  }, [sign.id]);
+  }, [checkFavoriteStatus]);
 
   const toggleFavorite = async () => {
     const user = auth.currentUser;
 
     if (!user) {
-      alert('Please sign in before add to favorites');
+      toast.error('Please sign in before adding to favorites');
       return;
     }
 
-    const useRef = doc(db, 'users', user.uid);
+    if (!sign || !sign.id) {
+      console.error("Sign data is incomplete:", sign);
+      toast.error('Cannot add incomplete sign to favorites');
+      return;
+    }
 
-    try{
-      if(isFavorite) {
-        await updateDoc(useRef, {
-          // Remove from favorite
-          favorites: arrayRemove({
-            id: sign.id,
-            word: sign.word,
-            thumbnailURL: sign.thumbnailURL,
-          })
+    setIsLoading(true);
+    const userRef = doc(db, 'users', user.uid);
+
+    
+    const favoriteData = {
+      id: sign.id,
+      word: sign.word,
+      thumbnailURL: sign.thumbnailURL || ""
+    };
+
+    try {
+      if (isFavorite) {
+        
+        await updateDoc(userRef, {
+          favorites: arrayRemove(favoriteData)
         });
         toast.success('Removed from favorites');
-        // รีเฟรชหน้าหลังจากลบ
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
       } else {
-        await updateDoc(useRef, {
-          // Add to favorite
-          favorites: arrayUnion({
-            id: sign.id,
-            word: sign.word,
-            thumbnailURL: sign.thumbnailURL
-          })
+        
+        await updateDoc(userRef, {
+          favorites: arrayUnion(favoriteData)
         });
         toast.success('Added to favorites');
       }
+      
+      
       setIsFavorite(!isFavorite);
+      
+      
+      if (onFavoriteChange) {
+        onFavoriteChange(!isFavorite, favoriteData);
+      }
     } catch (error) {
       console.error('Error updating favorites:', error);
-      alert('Failed to update favorites');
+      toast.error('Failed to update favorites: ' + error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <button onClick={toggleFavorite} style={style.favbutton}>
-      {isFavorite ? (
-        <div>
+    <button 
+      onClick={toggleFavorite} 
+      style={style.favbutton}
+      disabled={isLoading}
+    >
+      {isLoading ? (
+        <div style={style.button}>
+          <span style={style.text}>Loading...</span>
+        </div>
+      ) : isFavorite ? (
+        <div style={style.button}>
           <Heart size={18} fill="white" />
           <span style={style.text}>Favorited</span>
         </div>
       ) : (
-        <div>
-          <Heart size={18} fill="none" />
+        <div style={style.button}>
+          <Heart size={18} />
           <span style={style.text}>Add to Favorites</span>
         </div>
       )}
     </button>
   );
 }
+
 const style = {
   favbutton: {
     display: "flex",
@@ -97,8 +128,8 @@ const style = {
   text: {
     color: "white",
     fontWeight: "bold",
-    marginLeft : '10px',
-    fontSize:'18px'
+    marginLeft: '10px',
+    fontSize: '18px'
   },
   button: {
     display: "flex",

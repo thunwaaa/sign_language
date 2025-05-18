@@ -16,7 +16,7 @@ const SignGrid = ({signs}) => {
           signs.map((sign) => (
             <div 
               style={style.signCard} 
-              // onClick={() => setSelectedSign(sign)} 
+               
               key={sign.id}
             >
               <SignCard

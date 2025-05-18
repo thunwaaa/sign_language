@@ -52,38 +52,52 @@ const FavButton = ({ sign, onFavoriteChange }) => {
     setIsLoading(true);
     const userRef = doc(db, 'users', user.uid);
 
-    
-    const favoriteData = {
-      id: sign.id,
-      word: sign.word,
-      thumbnailURL: sign.thumbnailURL || ""
-    };
-
     try {
-      if (isFavorite) {
-        
+      const userDoc = await getDoc(userRef);
+      
+      const favoriteData = {
+        id: sign.id,
+        word: sign.word,
+        thumbnailURL: sign.thumbnailURL || "",
+        modelURL: sign.modelURL || "",
+        meaning: sign.meaning || "",
+        description: sign.description || ""
+      };
+
+      if (!userDoc.exists()) {
         await updateDoc(userRef, {
-          favorites: arrayRemove(favoriteData)
+          favorites: [favoriteData]
         });
-        toast.success('Removed from favorites');
+        setIsFavorite(true);
       } else {
         
-        await updateDoc(userRef, {
-          favorites: arrayUnion(favoriteData)
-        });
-        toast.success('Added to favorites');
+        const currentFavorites = userDoc.data()?.favorites || [];
+        
+        if (isFavorite) {
+      
+          const updatedFavorites = currentFavorites.filter(fav => fav.id !== sign.id);
+          await updateDoc(userRef, {
+            favorites: updatedFavorites
+          });
+          setIsFavorite(false);
+        } else {
+          
+          const updatedFavorites = [...currentFavorites, favoriteData];
+          await updateDoc(userRef, {
+            favorites: updatedFavorites
+          });
+          setIsFavorite(true);
+        }
       }
-      
-      
-      setIsFavorite(!isFavorite);
-      
-      
+
+    
       if (onFavoriteChange) {
         onFavoriteChange(!isFavorite, favoriteData);
       }
+
     } catch (error) {
       console.error('Error updating favorites:', error);
-      toast.error('Failed to update favorites: ' + error.message);
+      toast.error('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
     } finally {
       setIsLoading(false);
     }

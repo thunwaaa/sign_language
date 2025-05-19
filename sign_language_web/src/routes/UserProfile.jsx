@@ -7,7 +7,6 @@ import Header from "../components/Header";
 import SignCard from "../components/SignCard";
 import { auth, db } from "../firebase";
 
-
 function UserProfile() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -53,23 +52,19 @@ function UserProfile() {
 
   const handleFavoriteRemoved = async () => {
     try {
-     
       if (user) {
         await fetchUserData(user.uid);
       }
-    
       setSelectedSign(null);
-      
       setTimeout(() => {
         window.location.reload();
       }, 100);
-      
     } catch (error) {
       console.error("Error handling favorite removal:", error);
     }
   };
 
-  if (!userData) return <div>Loading...</div>;
+  if (!userData) return <div style={styles.loading}>Loading...</div>;
 
   return (
     <>
@@ -77,33 +72,44 @@ function UserProfile() {
       <div style={styles.container}>
         <div style={styles.left}>
           <div style={styles.profileCard}>
-            <div style={styles.avatar} />
-            <h2>{userData.username || "Username"}</h2>
-            <p style={styles.email}>
-              📧 {userData.email || "example@domain.com"}
-            </p>
-            <p style={styles.favorites}>❤️ {favorites.length} Favorite</p>
-            <button onClick={handleEditProfile} style={styles.editBtn}>
+            {userData.profilePicture ? (
+              <img
+                src={userData.profilePicture}
+                alt="User Avatar"
+                style={styles.avatarImg}
+              />
+            ) : (
+              <div style={styles.avatarPlaceholder} />
+            )}
+
+            <h2 style={styles.username}>{userData.username || "Username"}</h2>
+            <p style={styles.email}>📧 {userData.email || "example@domain.com"}</p>
+            <p style={styles.favorites}>❤️ {favorites.length} Favorite{favorites.length !== 1 ? 's' : ''}</p>
+
+            <button onClick={handleEditProfile} style={{ ...styles.button, ...styles.editBtn }}>
               Edit Profile
             </button>
-            <button onClick={handleLogout} style={styles.logoutBtn}>
+            <button onClick={handleLogout} style={{ ...styles.button, ...styles.logoutBtn }}>
               Log Out
             </button>
           </div>
         </div>
 
         <div style={styles.right}>
-          <h3>{userData.username}'s Favorite</h3>
+          <h3 style={styles.favoritesTitle}>{userData.username}'s Favorites</h3>
           <div style={styles.grid}>
             {favorites.length === 0 ? (
-              <p>No favorites yet.</p>
+              <p style={styles.noFavorites}>No favorites yet.</p>
             ) : (
               favorites.map((fav, index) => (
-                <div key={index} style={styles.favoriteCard}>
+                <div
+                  key={index}
+                  style={styles.favoriteCard}
+                  onClick={() => handleCardClick(fav)}
+                >
                   <SignCard
                     word={fav.word}
                     thumbnailUrl={fav.thumbnailURL}
-                    onClick={() => handleCardClick(fav)}
                   />
                 </div>
               ))
@@ -131,78 +137,119 @@ function UserProfile() {
 }
 
 const styles = {
+  loading: {
+    fontSize: 18,
+    textAlign: "center",
+    padding: "2rem",
+    color: "#555",
+  },
   container: {
     display: "flex",
     position: "relative",
-    padding: "2rem",
-    backgroundColor: "#fff",
+    padding: "3rem 4rem",
+    backgroundColor: "#f9fafc",
     minHeight: "100vh",
-    zIndex: 1, 
+    zIndex: 1,
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   },
   left: {
     flex: 1,
-    maxWidth: "300px",
+    maxWidth: "320px",
   },
   right: {
     flex: 2,
-    paddingLeft: "2rem",
+    paddingLeft: "3rem",
   },
   profileCard: {
-    border: "1px solid #ccc",
-    borderRadius: "10px",
-    padding: "1.5rem",
+    backgroundColor: "#ffffff",
+    borderRadius: "12px",
+    padding: "2rem 1.5rem",
     textAlign: "center",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+    transition: "box-shadow 0.3s ease",
   },
-  avatar: {
-    width: "100px",
-    height: "100px",
+  avatarPlaceholder: {
+    width: "110px",
+    height: "110px",
     borderRadius: "50%",
-    backgroundColor: "#ddd",
-    margin: "0 auto 1rem",
+    backgroundColor: "#d0d5dd",
+    margin: "0 auto 1.5rem",
+  },
+  avatarImg: {
+    width: "110px",
+    height: "110px",
+    borderRadius: "50%",
+    objectFit: "cover",
+    margin: "0 auto 1.5rem",
+    boxShadow: "0 0 8px rgba(59, 76, 202, 0.4)",
+  },
+  username: {
+    fontSize: "1.8rem",
+    fontWeight: "700",
+    margin: "0 0 0.3rem",
+    color: "#1a1a1a",
   },
   email: {
-    margin: "0.5rem 0",
+    margin: "0.4rem 0",
+    fontSize: "1rem",
+    color: "#666",
+    fontWeight: "500",
   },
   favorites: {
-    marginBottom: "1.5rem",
+    marginBottom: "2rem",
+    fontSize: "1.1rem",
+    fontWeight: "600",
+    color: "#3b4cca",
+  },
+  button: {
+    padding: "0.65rem 1rem",
+    borderRadius: "6px",
+    border: "none",
+    fontWeight: "600",
+    cursor: "pointer",
+    fontSize: "1rem",
+    width: "100%",
+    transition: "background-color 0.3s ease, box-shadow 0.3s ease",
   },
   editBtn: {
     backgroundColor: "#3B4CCA",
     color: "#fff",
-    padding: "0.5rem 1rem",
-    border: "none",
-    borderRadius: "5px",
-    marginBottom: "0.5rem",
-    cursor: "pointer",
-    width: "100%",
+    marginBottom: "1rem",
   },
   logoutBtn: {
     backgroundColor: "#e74c3c",
     color: "#fff",
-    padding: "0.5rem 1rem",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-    width: "100%",
   },
   grid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-    gap: "1rem",
-    marginTop: "1rem",
+    gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+    gap: "1.4rem",
+    marginTop: "1.5rem",
     zIndex: 100,
   },
   favoriteCard: {
-    border: "1px solid #ddd",
-    borderRadius: "10px",
+    backgroundColor: "#fff",
+    borderRadius: "12px",
     padding: "1rem",
     textAlign: "center",
     cursor: "pointer",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+    transition: "transform 0.2s ease, box-shadow 0.3s ease",
   },
-  favoriteImage: {
-    width: "50px",
-    height: "50px",
-    marginBottom: "0.5rem",
+  favoriteCardHover: {
+    transform: "translateY(-6px)",
+    boxShadow: "0 6px 20px rgba(59, 76, 202, 0.2)",
+  },
+  noFavorites: {
+    fontSize: "1.1rem",
+    color: "#888",
+    fontStyle: "italic",
+  },
+  favoritesTitle: {
+    fontSize: "1.7rem",
+    fontWeight: "700",
+    marginBottom: "1rem",
+    color: "#222",
   },
   bubbles: {
     position: "absolute",
@@ -217,27 +264,28 @@ const styles = {
   circle: {
     position: "absolute",
     borderRadius: "50%",
-    backgroundColor: "#3B4CCA",
-    opacity: 0.15,
+    opacity: 0.08,
+    filter: "blur(12px)",
   },
   circle1: {
-    width: 150,
-    height: 150,
-    bottom: -50,
-    left: -50,
+    width: 180,
+    height: 180,
+    bottom: -60,
+    left: -60,
+    backgroundColor: "#3B4CCA",
   },
   circle2: {
-    width: 100,
-    height: 100,
-    top: 50,
-    right: 100,
+    width: 120,
+    height: 120,
+    top: 60,
+    right: 120,
     backgroundColor: "#6D83F2",
   },
   circle3: {
-    width: 80,
-    height: 80,
-    top: 200,
-    left: 400,
+    width: 90,
+    height: 90,
+    top: 220,
+    left: 430,
     backgroundColor: "#A1A9FF",
   },
 };

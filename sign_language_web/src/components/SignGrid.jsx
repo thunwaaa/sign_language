@@ -16,13 +16,13 @@ const SignGrid = ({signs}) => {
           signs.map((sign) => (
             <div 
               style={style.signCard} 
-               
+               onClick={() => handleCardClick(sign)}
               key={sign.id}
             >
               <SignCard
                 sign={sign}
                 word={sign.word}
-                onClick={() => handleCardClick(sign)}
+                
               />
             </div>
           ))

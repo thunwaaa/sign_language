@@ -1,40 +1,34 @@
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { auth } from '../firebase'; // adjust the path if needed
 
+import { sendPasswordResetEmail } from "firebase/auth";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { auth } from "../firebase";
 
-function SignIn() {
+function ForgotPassword() {
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
 
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError('');
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
+  const handleReset = async (e) => {
+    e.preventDefault();
+    setMessage("");
+    setError("");
 
-    if (!user.emailVerified) {
-      setError("Please verify your email before logging in.");
-      await auth.signOut(); // Prevent access
-      return;
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setMessage('Password reset email sent!');
+      navigate('/forget-success');
+    } catch (err) {
+      setError("Failed to send reset email. Please check your email address.");
     }
-
-    navigate('/');
-  } catch (err) {
-    setError('Incorrect email or password.');
-  }
-};
-
+  };
 
   return (
     <div style={styles.container}>
       <div style={styles.leftSection}>
         <h1 style={styles.welcome}>
-          Welcome back to <Link href="/" style={styles.brand} >HandsUp!</Link>
+          Forgot your password? <Link to="/" style={styles.brand}>HandsUp!</Link>
         </h1>
         <div style={styles.circles}>
           <div style={{ ...styles.circle, ...styles.circle1 }} />
@@ -45,9 +39,9 @@ function SignIn() {
       </div>
 
       <div style={styles.formCard}>
-        <h2 style={styles.formTitle}>Sign In</h2>
-        <form onSubmit={handleSubmit}>
-          <label style={styles.label}>E-mail</label>
+        <h2 style={styles.formTitle}>Reset Password</h2>
+        <form onSubmit={handleReset}>
+          <label style={styles.label}>Enter your email</label>
           <input
             type="email"
             style={styles.input}
@@ -55,27 +49,12 @@ function SignIn() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          {message && <p style={{ color: "green" }}>{message}</p>}
+          {error && <p style={{ color: "red" }}>{error}</p>}
 
-          <label style={styles.label}>Password</label>
-          <input
-            type="password"
-            style={styles.input}
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          <p style={{ textAlign: 'right', marginBottom: '1rem' }}>
-          <a href="/forgot-password" style={{ color: '#3B4CCA', textDecoration: 'none' }}>
-              Forgot Password?
-            </a>
-          </p>
-          <button type="submit" style={styles.button}>Sign In</button>
-
+          <button type="submit" style={styles.button}>Send Reset Link</button>
           <p style={styles.registerText}>
-            Don't have an account?
-            <a href="/Register" style={styles.registerLink}>Register</a>
+            Go back to <Link to="/signin" style={styles.registerLink}>Sign In</Link>
           </p>
         </form>
       </div>
@@ -105,7 +84,7 @@ const styles = {
     maxWidth: '400px',
     zIndex: 2,
   },
-  brand: { 
+  brand: {
     color: '#3B4CCA',
     cursor: 'pointer',
     zIndex: 100,
@@ -200,9 +179,7 @@ const styles = {
     textDecoration: 'none',
     marginLeft: '0.3rem',
   },
-  h1: {
-    zIndex: 100,
-  }
 };
 
-export default SignIn;
+
+export default ForgotPassword;

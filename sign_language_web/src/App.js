@@ -5,14 +5,15 @@ import './App.css';
 import CheckEmail from "./routes/CheckEmail";
 import EditProfile from "./routes/EditProfile";
 import Favorite from './routes/Favorite';
+import ForgotPassword from "./routes/Forgotpassword";
 import Home from './routes/Home';
 import { default as Login, default as SignIn } from './routes/Login';
 import Register from './routes/Register';
 import RegisterSuccess from "./routes/RegisterSuccess";
+import SendEmailSuccess from "./routes/SendEmailSuccess";
 import Translate from './routes/Translate';
 import UserProfile from "./routes/UserProfile";
 import Vocabulary from './routes/Vocab';
-
 
 function App() {
   const [user, setUser] = useState(null);
@@ -46,6 +47,8 @@ function App() {
         <Route path="/CheckEmail" element={<CheckEmail />} />
         <Route path="/UserProfile" element={<UserProfile />} />
         <Route path="/EditProfile" element={<EditProfile />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/forget-success" element={<SendEmailSuccess />} />
       </Routes>
     </Router>
   );
